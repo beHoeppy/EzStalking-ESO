@@ -8,6 +8,8 @@ function EzStalking.Menu:initialize()
     local LAM = LibAddonMenu2
     if not LAM then return end
 
+    local LD = LibDialog
+
     local panel_data = {
         type = "panel",
         name = EzStalking.title,
@@ -63,6 +65,22 @@ function EzStalking.Menu:initialize()
         requiresReload = false,
         default = EzStalking.defaults.log.enabled,
     }
+    local libDialog = LibDialog
+    if libDialog then
+        options_table[#options_table+1] =
+        {
+            type = "checkbox",
+            name = L.menu.upload_reminder,
+            tooltip = L.menu.upload_reminder_tooltip,
+            getFunc = function() return EzStalking.settings.upload_reminder end,
+            setFunc = function(value)
+                EzStalking.show_upload_reminder_dialog(value)
+                EzStalking.settings.upload_reminder = value
+            end,
+            requiresReload = false,
+            default = EzStalking.defaults.upload_reminder,
+        }
+    end
     --[[
     options_table[#options_table+1] =
     {

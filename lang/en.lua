@@ -12,6 +12,9 @@ L.menu.description                  = substring_description1 .. "\n" .. substrin
 L.menu.accountwide                  = "Accountwide settings"
 L.menu.accountwide_tooltip          = "Share settings across all characters."
 
+L.menu.upload_reminder              = "Upload reminder"
+L.menu.upload_reminder_tooltip      = "Shows a dialog on logout/exit reminding you to upload your log file."
+
 L.menu.logging_enabled              = "Automatic logging"
 L.menu.logging_enabled_tooltip      = "Enable automatic encounter logging"
 
@@ -46,6 +49,10 @@ L.menu.indicator.locked             = substring_locked -- do not edit
 local substring_color               = "Color"
 L.menu.indicator.color_tooltip      = "Select the color for the indicator."
 L.menu.indicator.color              = substring_color -- do not edit
+
+L.dialog = { }
+L.dialog.title                      = "Encounterlog Reminder"
+L.dialog.text                       = "Don't forget to upload your Encounterlog file!"
 
 -- [[ Slash Command Arguments]]
 L.slash_command = { }               -- [[ Slash Command Arguments]]

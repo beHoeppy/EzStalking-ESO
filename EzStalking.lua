@@ -2,15 +2,18 @@ if EzStalking == nil then EzStalking = { } end
 local EzStalking = _G['EzStalking']
 local L = EzStalking:GetLocale()
 
+local libDialog = LibDialog
+
 EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2.8'
+EzStalking.version      = '1.2.9'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
     account_wide = false,
+    upload_reminder = false,
 
     log = {
         enabled = false,
@@ -148,6 +151,36 @@ function EzStalking.enable_automatic_logging(value)
     end
 end
 
+
+-- [[ 
+EzStalking.logout_delayed = false
+local function delay_logout()
+    while EzStalking.logout_delayed == false do 
+        --nothing
+    end
+end
+
+local dialog_registered = false
+function EzStalking.show_upload_reminder_dialog(value)
+    if libDialog and value and not dialog_registered then
+        libDialog:RegisterDialog(EzStalking.name, "UploadReminder", L.dialog.title, L.dialog.text, function() EzStalking.logout_delayed = true end)
+        ZO_PreHook("Logout", function()
+            libDialog:ShowDialog(EzStalking.name, "UploadReminder")
+            --delay_logout()
+            return false
+        end)
+        ZO_PreHook("Quit", function()
+            libDialog:ShowDialog(EzStalking.name, "UploadReminder")
+            --delay_logout()
+            return false
+        end)
+
+        dialog_registered = true
+    end
+end
+--]]
+
+
 function EzStalking:initialize()
     EzStalking.UI:initialize()
     EzStalking.Menu:initialize()
@@ -165,6 +198,7 @@ function EzStalking:initialize()
       end)
 
     EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
+    EzStalking.show_upload_reminder_dialog(EzStalking.settings.upload_reminder)
 end
 
 local function on_addon_loaded(event, name)
