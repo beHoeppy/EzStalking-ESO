@@ -6,7 +6,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2.6'
+EzStalking.version      = '1.2.7'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -33,6 +33,16 @@ EzStalking.defaults = {
         unlocked_color = {0, 1, 1, 0.7}
     },
 }
+
+--[[
+local function on_interface_setting_changed(event, setting_type)
+    if setting_type = SETTING_TYPE_COMBAT then
+        if EzStalking.settings.indicator.enabled then
+            EzStalking.UI.toggle_fg_color()
+        end
+    end
+end
+--]]
 
 local function on_player_activated(event)
     local is_instance = GetCurrentZoneDungeonDifficulty()
@@ -89,10 +99,10 @@ function EzStalking.slash_command(arg)
         EzStalking.toggle_logging()
     elseif (arg == L.slash_command.anonymous --[['anonymous']]) or (arg == zo_strsub(L.slash_command.anonymous, 1, 1) --[['a']]) then
         EzStalking.set_anonymity(true)
-        notify_anonymity = L.message.slash_command.anonymous
+        notify_anonymity = L.message.anonymity.anonymous
     elseif (arg == L.slash_command.named --[['named']]) or (arg == zo_strsub(L.slash_command.named, 1, 1) --[['n']]) then
         EzStalking.set_anonymity(false)
-        notify_anonymity = L.message.slash_command.named
+        notify_anonymity = L.message.anonymity.named
     elseif (arg == L.slash_command.unlock) and EzStalking.settings.indicator.enabled then
             EzStalking.UI.lock(false)
     elseif (arg == L.slash_command.lock) and EzStalking.settings.indicator.enabled then
@@ -126,6 +136,8 @@ function EzStalking:initialize()
     EzStalking.Menu:initialize()
 
     SLASH_COMMANDS[EzStalking.slash] = EzStalking.slash_command
+
+    --EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_INTERFACE_SETTING_CHANGED, on_interface_setting_changed)
 
     EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
 end
