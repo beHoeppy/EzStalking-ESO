@@ -1,8 +1,6 @@
 if EzStalking == nil then EzStalking = { } end
 local EzStalking = _G['EzStalking']
 local L = { }
-local spacing = "\t\t\t\t\t "
-spacing = ""
 
 -- [[ Menu ]]
 L.menu = { }
@@ -21,33 +19,33 @@ L.menu.location = { }               -- [[ Location Menu]]
 L.menu.location.header              = "Locations"
 local substring_housing             = "Player Housing"
 L.menu.location.housing_tooltip     = "Enable automatic logging in player houses."
-L.menu.location.housing             = spacing .. substring_housing -- do not edit
+L.menu.location.housing             = substring_housing -- do not edit
 
 local substring_arenas              = "Arenas"
 L.menu.location.arenas_tooltip      = "Enable automatic logging in solo and group arenas."
-L.menu.location.arenas              = spacing .. substring_arenas -- do not edit
+L.menu.location.arenas              = substring_arenas -- do not edit
 
 local substring_dungeons            = "Dungeons"
 L.menu.location.dungeons_tooltip    ="Enable automatic logging in dungeons."
-L.menu.location.dungeons            = spacing .. substring_dungeons -- do not edit
+L.menu.location.dungeons            = substring_dungeons -- do not edit
 
 local substring_trials              = "Trials"
 L.menu.location.trials_tooltip      = "Enable automatic logging in trials."
-L.menu.location.trials              = spacing .. substring_trials -- do not edit
+L.menu.location.trials              = substring_trials -- do not edit
 
 L.menu.indicator = { }              -- [[ Indicator Menu ]]
 L.menu.indicator.header             = "Indicator"
 local substring_enabled             = "Enabled"
-L.menu.indicator.enabled_tooltip    = "Shows a small on-screen indcator if logging is currently enabled."
-L.menu.indicator.enabled            = spacing .. substring_enabled -- do not edit
+L.menu.indicator.enabled_tooltip    = "Shows a small on-screen indcator whether logging is currently enabled or not."
+L.menu.indicator.enabled            = substring_enabled -- do not edit
 
 local substring_locked              = "Lock"
 L.menu.indicator.locked_tooltip     = "Locks indicator in place. While unlocked, indicator color is inverted."
-L.menu.indicator.locked             = spacing .. substring_locked -- do not edit
+L.menu.indicator.locked             = substring_locked -- do not edit
 
 local substring_color               = "Color"
 L.menu.indicator.color_tooltip      = "Select the color for the indicator."
-L.menu.indicator.color              = spacing .. substring_color -- do not edit
+L.menu.indicator.color              = substring_color -- do not edit
 
 -- [[ Slash Command Arguments]]
 L.slash_command = { }               -- [[ Slash Command Arguments]]
@@ -90,7 +88,7 @@ L.message.slash_command.lock        = "|cab7337" .. L.slash_command.lock .. "|r 
 L.message.slash_command.unlock      = "|cab7337" .. L.slash_command.unlock .. "|r - " .. substring_unlock
 L.message.slash_command.anonymous   = "|cab7337" .. L.slash_command.anonymous .. "|r " .. substring_or .. " |cab7337" .. zo_strsub(L.slash_command.anonymous, 1, 1) .. "|r - " .. substring_anonymous
 L.message.slash_command.named       = "|cab7337" .. L.slash_command.named .. "|r " .. substring_or .. " |cab7337" .. zo_strsub(L.slash_command.named, 1, 1) .. "|r - " .. substring_named
-L.message.slash_command.note        = spacing .. "|cff3737" .. substring_note .. "|r"
+L.message.slash_command.note        = "|cff3737" .. substring_note .. "|r"
 L.message.slash_command.toggle      = "|cab7337<" .. substring_empty .. ">|r - " .. substring_toggle
 -- [[ continue editing below ]]
 

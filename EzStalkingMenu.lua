@@ -79,13 +79,8 @@ function EzStalking.Menu:initialize()
     --]]
     options_table[#options_table+1] =
     {
-        type = "divider",
-    }
-    options_table[#options_table+1] =
-    {
-        type = "description",
-        title = L.menu.location.header,
-        width = "half",
+        type = "header",
+        name = L.menu.location.header,
     }
     options_table[#options_table+1] =
     {
@@ -133,13 +128,8 @@ function EzStalking.Menu:initialize()
     }
     options_table[#options_table+1] =
     {
-        type = "divider",
-    }
-    options_table[#options_table+1] =
-    {
-        type = "description",
-        title = L.menu.indicator.header,
-        width = "half",
+        type = "header",
+        name = L.menu.indicator.header,
     }
     options_table[#options_table+1] =
     {
