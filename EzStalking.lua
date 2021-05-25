@@ -6,7 +6,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2.7'
+EzStalking.version      = '1.2.8'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -34,15 +34,39 @@ EzStalking.defaults = {
     },
 }
 
---[[
-local function on_interface_setting_changed(event, setting_type)
-    if setting_type = SETTING_TYPE_COMBAT then
-        if EzStalking.settings.indicator.enabled then
-            EzStalking.UI.toggle_fg_color()
-        end
+local InstanceType = { None = 0, Trial = 1, Arena = 2, Dungeon = 3}
+
+local function determine_instance_type()
+    local revive_counter = GetCurrentRaidStartingReviveCounters()
+    revive_counter = revive_counter == nil and 0 or revive_counter
+    
+    local raid_id = GetCurrentParticipatingRaidId()
+    local instance_type = InstanceType.None
+
+    if (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
+        instance_type = InstanceType.Trial
+    elseif revive_counter <= 24 and raid_id >= 4 then
+        instance_type = InstanceType.Arena
+    elseif revive_counter == 0 and raid_id == 0 then
+        instance_type = InstanceType.Dungeon
     end
+
+    return instance_type
 end
---]]
+
+local function on_raid_trial_started(event)
+    EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED)
+    local toggle = false
+    
+    instance_type = determine_instance_type()
+    if EzStalking.settings.log.trials and instance_type == InstanceType.Trial then
+        toggle = true
+    elseif EzStalking.settings.log.arenas and instance_type == InstanceType.Arena then
+        toggle = true
+    end
+
+    EzStalking.toggle_logging(toggle)
+end
 
 local function on_player_activated(event)
     local is_instance = GetCurrentZoneDungeonDifficulty()
@@ -52,19 +76,22 @@ local function on_player_activated(event)
         if IsEncounterLogEnabled() then
             toggle = true
         elseif is_instance == DUNGEON_DIFFICULTY_VETERAN or not EzStalking.settings.log.veteran_only then
-            local revive_counter = GetCurrentRaidStartingReviveCounters()
-            revive_counter = revive_counter == nil and 0 or revive_counter
+            local instance_type = determine_instance_type()
 
-            local raid_id = GetCurrentParticipatingRaidId()
-
-            if EzStalking.settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
+            if EzStalking.settings.log.trials and instance_type == InstanceType.Trial then
                 toggle = true
-            elseif EzStalking.settings.log.arenas and revive_counter <= 24 and raid_id >= 4 then
+            elseif EzStalking.settings.log.arenas and instance_type == InstanceType.Arena then
                 toggle = true
-            elseif EzStalking.settings.log.dungeons and revive_counter == 0 and raid_id == 0 then
+            elseif EzStalking.settings.log.dungeons and instance_type == InstanceType.Dungeon then
                 toggle = true
             end
-        end
+    
+            -- repeated check to make sure logging really starts when the trial/arena starts
+            -- NOTE: potentially look into EVENT_RAID_PARTICIPATION_UPDATE instead 
+            if EzStalking.settings.log.trials or EzStalking.settings.log.arenas then
+                EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
+            end 
+        end       
     elseif EzStalking.settings.log.housing and GetCurrentHouseOwner() ~= "" then
         toggle = true
     end
@@ -75,16 +102,6 @@ end
 function EzStalking.toggle_logging(value)
     local toggle = (value == nil) and not IsEncounterLogEnabled() or value
     SetEncounterLogEnabled(toggle)
-
-    if EzStalking.settings.indicator.enabled then
-        EzStalking.UI.toggle_fg_color()
-        if not EzStalking.settings.indicator.locked then
-            CHAT_SYSTEM:AddMessage(L.message.indicator.warn_unlocked)
-        end
-    else
-        local message = toggle and L.message.logging.enabled or L.message.logging.disabled
-        CHAT_SYSTEM:AddMessage(message)
-    end
 end
 EzStalking_keybind_toggle = EzStalking.toggle_logging
 
@@ -137,7 +154,15 @@ function EzStalking:initialize()
 
     SLASH_COMMANDS[EzStalking.slash] = EzStalking.slash_command
 
-    --EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_INTERFACE_SETTING_CHANGED, on_interface_setting_changed)
+    ZO_PostHook("SetEncounterLogEnabled", function()
+            if EzStalking.settings.indicator.enabled then
+                EzStalking.UI.toggle_fg_color()
+                if not EzStalking.settings.indicator.locked then
+                    CHAT_SYSTEM:AddMessage(L.message.indicator.warn_unlocked)
+                end
+            end
+        return false
+      end)
 
     EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
 end
