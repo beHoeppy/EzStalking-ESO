@@ -5,7 +5,7 @@ local L = EzStalking:GetLocale()
 EzStalking.Menu = { }
 
 function EzStalking.Menu:initialize()
-    local LAM = LibStub("LibAddonMenu-2.0")
+    local LAM = LibAddonMenu2
     if not LAM then return end
 
     local panel_data = {

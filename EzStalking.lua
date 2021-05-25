@@ -6,7 +6,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2.1'
+EzStalking.version      = '1.2.2'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -39,21 +39,21 @@ local function on_player_activated(event)
     local toggle = false
 
     if is_instance ~= DUNGEON_DIFFICULTY_NONE then
-        local revive_counter = GetCurrentRaidStartingReviveCounters()
-        revive_counter = revive_counter == nil and 0 or revive_counter
+        if IsEncounterLogEnabled() then
+            toggle = true
+        elseif is_instance == DUNGEON_DIFFICULTY_VETERAN or not EzStalking.settings.log.veteran_only then
+            local revive_counter = GetCurrentRaidStartingReviveCounters()
+            revive_counter = revive_counter == nil and 0 or revive_counter
 
-        local raid_id = GetCurrentParticipatingRaidId()
+            local raid_id = GetCurrentParticipatingRaidId()
 
-        if is_instance == DUNGEON_DIFFICULTY_VETERAN or not EzStalking.settings.log.veteran_only then
             if EzStalking.settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
                 toggle = true
-            elseif EzStalking.settings.log.arenas and revive_counter <= 24 and (raid_id >= 4 and raid_id > 0) then
+            elseif EzStalking.settings.log.arenas and revive_counter <= 24 and raid_id >= 4 then 
                 toggle = true
             elseif EzStalking.settings.log.dungeons and revive_counter == 0 and raid_id == 0 then
                 toggle = true
             end
-        elseif IsEncounterLogEnabled() then
-            toggle = true
         end
     elseif EzStalking.settings.log.housing and GetCurrentHouseOwner() ~= "" then
         toggle = true

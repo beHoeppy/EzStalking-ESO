@@ -94,5 +94,3 @@ function EzStalking.UI:initialize()
     EzStalking.UI.enable_indicator(EzStalking.settings.indicator.enabled)
     EzStalking.UI.lock(EzStalking.settings.indicator.locked)
 end
-
-    
