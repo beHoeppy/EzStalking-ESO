@@ -6,7 +6,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2.2'
+EzStalking.version      = '1.2.3'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -49,7 +49,7 @@ local function on_player_activated(event)
 
             if EzStalking.settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
                 toggle = true
-            elseif EzStalking.settings.log.arenas and revive_counter <= 24 and raid_id >= 4 then 
+            elseif EzStalking.settings.log.arenas and revive_counter <= 24 and raid_id >= 4 then
                 toggle = true
             elseif EzStalking.settings.log.dungeons and revive_counter == 0 and raid_id == 0 then
                 toggle = true
@@ -72,7 +72,7 @@ function EzStalking.toggle_logging(value)
             CHAT_SYSTEM:AddMessage(L.message.indicator.warn_unlocked)
         end
     else
-        local message = toggle and L.message.logging.enabled or L.message.logging.enabled
+        local message = toggle and L.message.logging.enabled or L.message.logging.disabled
         CHAT_SYSTEM:AddMessage(message)
     end
 end
