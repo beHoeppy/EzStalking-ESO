@@ -6,7 +6,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2'
+EzStalking.version      = '1.2.1'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
