@@ -1,57 +1,107 @@
-local strings = {
+if EzStalking == nil then EzStalking = { } end
+local EzStalking = _G['EzStalking']
+local L = { }
+local spacing = "\t\t\t\t\t "
+spacing = ""
 
 -- [[ Menu ]]
-SI_EZS_MENU_HEADER = "Settings",
-SI_EZS_MENU_DESCRIPTION = "Select if and where you want Encounter Logging to automatically start.\nPlease note: If enabled, it automatically disables logging outside of specified places.",
+L.menu = { }
+L.menu.header                       = "Settings"
+local substring_description1        = "Select if and where you want Encounter Logging to automatically start."
+local substring_description2        = "Please note: If enabled, it automatically disables logging outside of specified places."
+L.menu.description                  = substring_description1 .. "\n" .. substring_description2 -- do not edit
 
-SI_EZS_MENU_ACCOUNTWIDE = "Accountwide settings",
-SI_EZS_MENU_ACCOUNTWIDE_TOOLTIP = "Share settings across all characters.",
+L.menu.accountwide                  = "Accountwide settings"
+L.menu.accountwide_tooltip          = "Share settings across all characters."
 
--- [[ Logging ]]
-SI_EZS_MENU_LOGGING_ENABLED = "Automatic logging",
-SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP = "Enable automatic encounter logging",
+L.menu.logging_enabled              = "Automatic logging"
+L.menu.logging_enabled_tooltip      = "Enable automatic encounter logging"
 
-SI_EZS_MENU_LOCATION_SUBHEADER = "Locations",
-SI_EZS_MENU_LOCATION_HOUSING = "\t\t\t\t\t Player Housing",
-SI_EZS_MENU_LOCATION_HOUSING_TOOLTIP = "Enable automatic logging in player houses.",
-SI_EZS_MENU_LOCATION_ARENAS = "\t\t\t\t\t Arenas",
-SI_EZS_MENU_LOCATION_ARENAS_TOOLTIP = "Enable automatic logging in solo and group arenas.",
-SI_EZS_MENU_LOCATION_DUNGEONS = "\t\t\t\t\t Dungeons",
-SI_EZS_MENU_LOCATION_DUNGEONS_TOOLTIP = "Enable automatic logging in dungeons.",
-SI_EZS_MENU_LOCATION_TRIALS = "\t\t\t\t\t Trials",
-SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP = "Enable automatic logging in trials.",
+L.menu.location = { }               -- [[ Location Menu]]
+L.menu.location.header              = "Locations"
+local substring_housing             = "Player Housing"
+L.menu.location.housing_tooltip     = "Enable automatic logging in player houses."
+L.menu.location.housing             = spacing .. substring_housing -- do not edit
 
--- [[ Indicator ]]
-SI_EZS_MENU_INDICATOR_SUBHEADING = "Indicator",
-SI_EZS_MENU_INDICATOR_ENABLED = "\t\t\t\t\t Enabled",
-SI_EZS_MENU_INDICATOR_ENABLED_TOOLTIP = "Shows a small indcator on screen if logging is currently enabled",
-SI_EZS_MENU_INDICATOR_LOCKED = "\t\t\t\t\t Lock",
-SI_EZS_MENU_INDICATOR_LOCKED_TOOLTIP = "Locks indicator in place.",
-SI_EZS_MENU_INDICATOR_COLOR = "\t\t\t\t\t Color",
-SI_EZS_MENU_INDICATOR_COLOR_TOOLTIP = "Select the color for the indicator.",
+local substring_arenas              = "Arenas"
+L.menu.location.arenas_tooltip      = "Enable automatic logging in solo and group arenas."
+L.menu.location.arenas              = spacing .. substring_arenas -- do not edit
+
+local substring_dungeons            = "Dungeons"
+L.menu.location.dungeons_tooltip    ="Enable automatic logging in dungeons."
+L.menu.location.dungeons            = spacing .. substring_dungeons -- do not edit
+
+local substring_trials              = "Trials"
+L.menu.location.trials_tooltip      = "Enable automatic logging in trials."
+L.menu.location.trials              = spacing .. substring_trials -- do not edit
+
+L.menu.indicator = { }              -- [[ Indicator Menu ]]
+L.menu.indicator.header             = "Indicator"
+local substring_enabled             = "Enabled"
+L.menu.indicator.enabled_tooltip    = "Shows a small on-screen indcator if logging is currently enabled."
+L.menu.indicator.enabled            = spacing .. substring_enabled -- do not edit
+
+local substring_locked              = "Lock"
+L.menu.indicator.locked_tooltip     = "Locks indicator in place. While unlocked, indicator color is inverted."
+L.menu.indicator.locked             = spacing .. substring_locked -- do not edit
+
+local substring_color               = "Color"
+L.menu.indicator.color_tooltip      = "Select the color for the indicator."
+L.menu.indicator.color              = spacing .. substring_color -- do not edit
+
+-- [[ Slash Command Arguments]]
+L.slash_command = { }               -- [[ Slash Command Arguments]]
+L.slash_command.lock                = "lock"
+L.slash_command.unlock              = "unlock"
+L.slash_command.anonymous           = "anonymous"
+L.slash_command.named               = "named"
 
 -- [[ Messages ]]
-SI_EZS_MSG_LOGGING_ENABLED = GetString(SI_ENCOUNTER_LOG_ENABLED_ALERT),
-SI_EZS_MSG_LOGGING_DISABLED = GetString(SI_ENCOUNTER_LOG_DISABLED_ALERT),
+L.message = { }
+L.message.logging = { }             -- [[ Logging Messages ]]
+L.message.logging.enabled           = GetString(SI_ENCOUNTER_LOG_ENABLED_ALERT) -- do not edit
+L.message.logging.disabled          = GetString(SI_ENCOUNTER_LOG_DISABLED_ALERT) -- do not edit
 
+L.message.anonymity = { }           -- [[ Anonimity Messages ]]
+L.message.anonymity.preamble        = "You will now"
+L.message.anonymity.anonymous       = "appear anonymous."
+L.message.anonymity.named           = "share your character name."
+
+L.message.indicator = { }           -- [[ Indicator Messages ]]
+local substring_warn_unlocked       = "WARNING: on-screen indicator is unlocked!"
+L.message.indicator.warn_unlocked   = "|cff0000" .. substring_warn_unlocked .. "|r" -- do not edit
+
+local substring_or                  = "or"
+local substring_lock                = "lock on-screen indicator."
+local substring_unlock              = "unlock on-screen indicator."
+local substring_anonymous           = "set yourself to appear anonymous in encounter logs"
+local substring_named               = "share your character name in encouter logs."
+local substring_note                = "NOTE: Logs in progress will not update your anonymity setting."
+local substring_empty               = "nothing"
+local substring_toggle              = "toggle encounter logging."
+
+L.message.slash_command = { }       -- [[ Slash Command Messages]]
+L.message.slash_command.options     = "Options are:"
 --[[
-SI_EZS_MSG_ACTIVATE_HOUSING = "(Housing)",
-SI_EZS_MSG_ACTIVATE_ARENAS = "(Solo Arena)",
-SI_EZS_MSG_ACTIVATE_DUNGEONS = "(Dungeon)",
-SI_EZS_MSG_ACTIVATE_TRIALS = "(Trial)",
+        Do not edit the following lines!
+        They will be properly translated if you have translated everything above.
 --]]
+L.message.slash_command.lock        = "|cab7337" .. L.slash_command.lock .. "|r - " .. substring_lock
+L.message.slash_command.unlock      = "|cab7337" .. L.slash_command.unlock .. "|r - " .. substring_unlock
+L.message.slash_command.anonymous   = "|cab7337" .. L.slash_command.anonymous .. "|r " .. substring_or .. " |cab7337" .. zo_strsub(L.slash_command.anonymous, 1, 1) .. "|r - " .. substring_anonymous
+L.message.slash_command.named       = "|cab7337" .. L.slash_command.named .. "|r " .. substring_or .. " |cab7337" .. zo_strsub(L.slash_command.named, 1, 1) .. "|r - " .. substring_named
+L.message.slash_command.note        = spacing .. "|cff3737" .. substring_note .. "|r"
+L.message.slash_command.toggle      = "|cab7337<" .. substring_empty .. ">|r - " .. substring_toggle
+-- [[ continue editing below ]]
 
 -- [[ Keybindings ]]
-SI_BINDING_NAME_EZS_TOGGLE_LOGGING = "Toggle Encounterlog",
-}
+local kb = { }
+kb.SI_BINDING_NAME_EZSTALKING_TOGGLE_LOGGING = "Toggle Encounterlog"
 
-for i, v in pairs(strings) do
+for i, v in pairs(kb) do
     ZO_CreateStringId(i, v)
 end
 
-
---[[
-SI_EZS_MENU_VETERAN_ONLY = "Veteran difficulty only",
-SI_EZS_MENU_VETERAN_ONLY_TOOLTIP = "Check if you only want to log veteran difficulty in arenas, dungeons and trials.",
---]]
---SI_EZS_MENU_VETERAN_ONLY_TOOLTIP = "Addon currently supports automatic logging for veteran content only.",
+function EzStalking:GetLocale()
+    return L
+end

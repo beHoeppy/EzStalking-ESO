@@ -1,54 +1,62 @@
-local EZS = EZS
-if EZS == nil then EZS = {} end
+if EzStalking == nil then EzStalking = { } end
+local EzStalking = _G['EzStalking']
+local L = EzStalking:GetLocale()
 
---local WM = GetWindowManager()
-
-EZS.UI = { }
+EzStalking.UI = { }
 
 local function set_position()
-    local x, y = settings.indicator.position.x, settings.indicator.position.y
-    EZS.UI.indicator:ClearAnchors()
-    EZS.UI.indicator:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, x, y)
+    local x, y = EzStalking.settings.indicator.position.x, EzStalking.settings.indicator.position.y
+    EzStalking.UI.indicator:ClearAnchors()
+    EzStalking.UI.indicator:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, x, y)
 end
 
 local function save_position()
-    settings.indicator.position.x = EZS.UI.indicator:GetLeft()
-    settings.indicator.position.y = EZS.UI.indicator:GetTop()
+    EzStalking.settings.indicator.position.x = EzStalking.UI.indicator:GetLeft()
+    EzStalking.settings.indicator.position.y = EzStalking.UI.indicator:GetTop()
 end
 
-function EZS.UI.update_color()
-    local r, g, b = unpack(settings.indicator.color)
-    EZS.UI.indicator_fg:SetCenterColor(r, g, b, 0.7)
-    EZS.UI.indicator_fg:SetEdgeColor(r, g, b, 0.37)
+function EzStalking.UI.lock(value)
+    EzStalking.settings.indicator.locked = value
+    EzStalking.UI.update_color()
+    EzStalking.UI.toggle_fg_color()
+    EzStalking.UI.indicator:SetMouseEnabled(not value)
+    EzStalking.UI.indicator:SetMovable(not value)
 end
 
-function EZS.UI.enable_indicator(value)
-    EZS.UI.hide_indicator(not value)
-    EZS.UI.toggle_fg_color(value)
+function EzStalking.UI.update_color()
+    local r, g, b = unpack(EzStalking.settings.indicator.color)
+    EzStalking.UI.indicator_fg:SetCenterColor(r, g, b, 0.7)
+    EzStalking.UI.indicator_fg:SetEdgeColor(r, g, b, 0.37)
+end
+
+function EzStalking.UI.enable_indicator(value)
+    EzStalking.UI.hide_indicator(not value)
+    EzStalking.UI.toggle_fg_color()
     if value then
-        SCENE_MANAGER:GetScene("hud"):AddFragment(EZS.UI.indicator_fragment)
-        SCENE_MANAGER:GetScene("hudui"):AddFragment(EZS.UI.indicator_fragment)
+        SCENE_MANAGER:GetScene("hud"):AddFragment(EzStalking.UI.indicator_fragment)
+        SCENE_MANAGER:GetScene("hudui"):AddFragment(EzStalking.UI.indicator_fragment)
     else
-        SCENE_MANAGER:GetScene("hud"):RemoveFragment(EZS.UI.indicator_fragment)
-        SCENE_MANAGER:GetScene("hudui"):RemoveFragment(EZS.UI.indicator_fragment)
+        SCENE_MANAGER:GetScene("hud"):RemoveFragment(EzStalking.UI.indicator_fragment)
+        SCENE_MANAGER:GetScene("hudui"):RemoveFragment(EzStalking.UI.indicator_fragment)
     end
 end
 
-function EZS.UI.hide_indicator(value)
-    EZS.UI.indicator_bg:SetHidden(value)
-    EZS.UI.indicator_fg:SetHidden(value)
-    EZS.UI.indicator:SetHidden(value)
+function EzStalking.UI.hide_indicator(value)
+    EzStalking.UI.indicator_bg:SetHidden(value)
+    EzStalking.UI.indicator_fg:SetHidden(value)
+    EzStalking.UI.indicator:SetHidden(value)
 end
 
-function EZS.UI.toggle_fg_color(value)
-    if value then
-        EZS.UI.indicator_fg:SetCenterColor(unpack(settings.indicator.color))
+function EzStalking.UI.toggle_fg_color()
+    if (not EzStalking.settings.indicator.locked or IsEncounterLogEnabled()) then
+        local color = EzStalking.settings.indicator.locked and EzStalking.settings.indicator.color or EzStalking.settings.indicator.unlocked_color
+        EzStalking.UI.indicator_fg:SetCenterColor(unpack(color))
     else
-        EZS.UI.indicator_fg:SetCenterColor(0, 0, 0, 0)
+        EzStalking.UI.indicator_fg:SetCenterColor(0, 0, 0, 0)
     end
 end
 
-function EZS.UI.create_indicator()
+function EzStalking.UI:initialize()
     local dimensions = 17
 
     local _indicator = WINDOW_MANAGER:CreateTopLevelWindow("EZS_indicator")
@@ -76,14 +84,15 @@ function EZS.UI.create_indicator()
     _indicator_fg:SetEdgeTexture(nil, 1, 1, 0, 0)
     --_indicator_fg:SetHidden(false)
 
-    EZS.UI.indicator = _indicator
-    EZS.UI.indicator_bg = _indicator_bg
-    EZS.UI.indicator_fg = _indicator_fg
-    EZS.UI.indicator_fragment = ZO_HUDFadeSceneFragment:New(_indicator)
-    EZS.UI.enable_indicator(true)
+    EzStalking.UI.indicator = _indicator
+    EzStalking.UI.indicator_bg = _indicator_bg
+    EzStalking.UI.indicator_fg = _indicator_fg
+    EzStalking.UI.indicator_fragment = ZO_HUDFadeSceneFragment:New(_indicator)
+    EzStalking.UI.enable_indicator(true)
     set_position()
 
-    EZS.UI.enable_indicator(settings.indicator.enabled)
+    EzStalking.UI.enable_indicator(EzStalking.settings.indicator.enabled)
+    EzStalking.UI.lock(EzStalking.settings.indicator.locked)
 end
 
     

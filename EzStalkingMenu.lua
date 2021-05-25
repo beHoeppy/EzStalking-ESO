@@ -1,32 +1,35 @@
-local EZS = EZS
-if EZS == nil then EZS = {} end
+if EzStalking == nil then EzStalking = { } end
+local EzStalking = _G['EzStalking']
+local L = EzStalking:GetLocale()
 
-function EZS.build_menu()
+EzStalking.Menu = { }
+
+function EzStalking.Menu:initialize()
     local LAM = LibStub("LibAddonMenu-2.0")
     if not LAM then return end
 
     local panel_data = {
         type = "panel",
-        name = addon.title,
-        displayName = addon.title,
-        author = addon.author,
-        version = addon.version,
+        name = EzStalking.title,
+        displayName = EzStalking.title,
+        author = EzStalking.author,
+        version = EzStalking.version,
         registerForDefaults = true,
         registerForRefresh = true,
     }
-    LAM:RegisterAddonPanel(addon.name, panel_data)
+    LAM:RegisterAddonPanel(EzStalking.name, panel_data)
 
     local options_table = { }
     options_table[#options_table+1] =
     {
         type = "header",
-        name = GetString(SI_EZS_MENU_HEADER),
+        name = L.menu.header,
     }
     -- [[
     options_table[#options_table+1] =
     {
         type = "description",
-        text = GetString(SI_EZS_MENU_DESCRIPTION),
+        text = L.menu.description,
     }
     --]]
     options_table[#options_table+1] =
@@ -36,12 +39,12 @@ function EZS.build_menu()
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_ACCOUNTWIDE),
-        tooltip = GetString(SI_EZS_MENU_ACCOUNTWIDE_TOOLTIP),
+        name = L.menu.accountwide,
+        tooltip = L.menu.accountwide_tooltip,
         getFunc = function() return EzStalking_SavedVars.Default[GetDisplayName()]['$AccountWide']["account_wide"] end,
         setFunc = function(value) EzStalking_SavedVars.Default[GetDisplayName()]['$AccountWide']["account_wide"] = value end,
         requiresReload = true,
-        default = addon.defaults.account_wide,
+        default = EzStalking.defaults.account_wide,
     }
     options_table[#options_table+1] =
     {
@@ -50,15 +53,15 @@ function EZS.build_menu()
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_LOGGING_ENABLED),
-        tooltip = GetString(SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP),
-        getFunc = function() return settings.log.enabled end,
+        name = L.menu.logging_enabled,
+        tooltip = L.menu.logging_enabled_tooltip,
+        getFunc = function() return EzStalking.settings.log.enabled end,
         setFunc = function(value)
-            EZS.register_player_activated(value)
-            settings.log.enabled = value
+            EzStalking.enable_automatic_logging(value)
+            EzStalking.settings.log.enabled = value
         end,
         requiresReload = false,
-        default = addon.defaults.log.enabled,
+        default = EzStalking.defaults.log.enabled,
     }
     --[[
     options_table[#options_table+1] =
@@ -66,9 +69,9 @@ function EZS.build_menu()
         type = "checkbox",
         name = GetString(SI_EZS_MENU_LOCATION_VETERAN_ONLY),
         tooltip = GetString(SI_EZS_MENU_LOCATION_VETERAN_ONLY_TOOLTIP),
-        getFunc = function() return settings.veteran_only end,
-        setFunc = function(value) settings.veteran_only = value end,
-        --disabled = function() return not settings.log.enabled end,
+        getFunc = function() return EzStalking.settings.veteran_only end,
+        setFunc = function(value) EzStalking.settings.veteran_only = value end,
+        --disabled = function() return not EzStalking.settings.log.enabled end,
         disabled = true,
         requiresReload = false,
         default = addon.defaults.veteran_only,
@@ -81,52 +84,52 @@ function EZS.build_menu()
     options_table[#options_table+1] =
     {
         type = "description",
-        title = GetString(SI_EZS_MENU_LOCATION_SUBHEADER),
+        title = L.menu.location.header,
         width = "half",
     }
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_LOCATION_HOUSING),
-        tooltip = GetString(SI_EZS_MENU_LOCATION_HOUSING_TOOLTIP),
-        getFunc = function() return settings.log.housing end,
-        setFunc = function(value) settings.log.housing = value end,
-        disabled = function() return not settings.log.enabled end,
+        name = L.menu.location.housing,
+        tooltip = L.menu.location.housing_tooltip,
+        getFunc = function() return EzStalking.settings.log.housing end,
+        setFunc = function(value) EzStalking.settings.log.housing = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
         requiresReload = false,
-        default = addon.defaults.log.housing,
+        default = EzStalking.defaults.log.housing,
     }
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_LOCATION_ARENAS),
-        tooltip = GetString(SI_EZS_MENU_LOCATION_ARENAS_TOOLTIP),
-        getFunc = function() return settings.log.arenas end,
-        setFunc = function(value) settings.log.arenas = value end,
-        disabled = function() return not settings.log.enabled end,
+        name =  L.menu.location.arenas,
+        tooltip = L.menu.location.arenas_tooltip,
+        getFunc = function() return EzStalking.settings.log.arenas end,
+        setFunc = function(value) EzStalking.settings.log.arenas = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
         requiresReload = false,
-        default = addon.defaults.log.arenas,
+        default = EzStalking.defaults.log.arenas,
     }
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_LOCATION_DUNGEONS),
-        tooltip = GetString(SI_EZS_MENU_LOCATION_DUNGEONS_TOOLTIP),
-        getFunc = function() return settings.log.dungeons end,
-        setFunc = function(value) settings.log.dungeons = value end,
-        disabled = function() return not settings.log.enabled end,
+        name = L.menu.location.dungeons,
+        tooltip = L.menu.location.dungeons_tooltip,
+        getFunc = function() return EzStalking.settings.log.dungeons end,
+        setFunc = function(value) EzStalking.settings.log.dungeons = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
         requiresReload = false,
-        default = addon.defaults.log.dungeons,
+        default = EzStalking.defaults.log.dungeons,
     }
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_LOCATION_TRIALS),
-        tooltip = GetString(SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP),
-        getFunc = function() return settings.log.trials end,
-        setFunc = function(value) settings.log.trials = value end,
-        disabled = function() return not settings.log.enabled end,
+        name = L.menu.location.trials,
+        tooltip = L.menu.location.trials_tooltip,
+        getFunc = function() return EzStalking.settings.log.trials end,
+        setFunc = function(value) EzStalking.settings.log.trials = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
         requiresReload = false,
-        default = addon.defaults.log.trials,
+        default = EzStalking.defaults.log.trials,
     }
     options_table[#options_table+1] =
     {
@@ -135,52 +138,50 @@ function EZS.build_menu()
     options_table[#options_table+1] =
     {
         type = "description",
-        title = GetString(SI_EZS_MENU_INDICATOR_SUBHEADING),
+        title = L.menu.indicator.header,
         width = "half",
     }
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_INDICATOR_ENABLED),
-        tooltip = GetString(SI_EZS_MENU_INDICATOR_ENABLED_TOOLTIP),
-        getFunc = function() return settings.indicator.enabled end,
+        name = L.menu.indicator.enabled,
+        tooltip = L.menu.indicator.enabled_tooltip,
+        getFunc = function() return EzStalking.settings.indicator.enabled end,
         setFunc = function(value)
-            settings.indicator.enabled = value
-            EZS.UI.enable_indicator(value)
+            EzStalking.settings.indicator.enabled = value
+            EzStalking.UI.enable_indicator(value)
         end,
         requiresReload = false,
-        default = addon.defaults.indicator.enabled,
+        default = EzStalking.defaults.indicator.enabled,
     }
     options_table[#options_table+1] =
     {
         type = "checkbox",
-        name = GetString(SI_EZS_MENU_INDICATOR_LOCKED),
-        tooltip = GetString(SI_EZS_MENU_INDICATOR_LOCKED_TOOLTIP),
-        getFunc = function() return settings.indicator.locked end,
+        name = L.menu.indicator.locked,
+        tooltip = L.menu.indicator.locked_tooltip,
+        getFunc = function() return EzStalking.settings.indicator.locked end,
         setFunc = function(value)
-            settings.indicator.locked = value
-            EZS.UI.toggle_fg_color(not value)
-            EZS.UI.indicator:SetMouseEnabled(not value)
-            EZS.UI.indicator:SetMovable(not value)
+            EzStalking.UI.lock(value)
         end,
-        disabled = function() return not settings.indicator.enabled end,
+        disabled = function() return not EzStalking.settings.indicator.enabled end,
         requiresReload = false,
-        default = addon.defaults.indicator.locked,
+        default = EzStalking.defaults.indicator.locked,
     }
     options_table[#options_table+1] =
     {
         type = "colorpicker",
-        name = GetString(SI_EZS_MENU_INDICATOR_COLOR),
-        tooltip = GetString(SI_EZS_MENU_INDICATOR_COLOR_TOOLTIP),
-        getFunc = function() return unpack(settings.indicator.color) end,
+        name = L.menu.indicator.color,
+        tooltip = L.menu.indicator.color_tooltip,
+        getFunc = function() return unpack(EzStalking.settings.indicator.color) end,
         setFunc = function(r, g, b) 
-            settings.indicator.color = {r, g, b}
-            EZS.UI.update_color()
+            EzStalking.settings.indicator.color = {r, g, b}
+            EzStalking.settings.indicator.unlocked_color = {1 - r, 1 - g, 1 - b}
+            EzStalking.UI.update_color()
         end,
-        disabled = function() return not settings.indicator.enabled end,
+        disabled = function() return not EzStalking.settings.indicator.enabled end,
         requiresReload = false,
-        default = addon.defaults.indicator.color,
+        default = EzStalking.defaults.indicator.color,
     }
 
-    LAM:RegisterOptionControls(addon.name, options_table)
+    LAM:RegisterOptionControls(EzStalking.name, options_table)
 end
