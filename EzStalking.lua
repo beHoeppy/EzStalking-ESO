@@ -6,7 +6,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.1'
+EzStalking.version      = '1.2'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -44,23 +44,19 @@ local function on_player_activated(event)
 
         local raid_id = GetCurrentParticipatingRaidId()
 
-        if EzStalking.settings.log.veteran_only and is_instance ~= DUNGEON_DIFFICULTY_VETERAN then
-            toggle = false
-        else  
+        if is_instance == DUNGEON_DIFFICULTY_VETERAN or not EzStalking.settings.log.veteran_only then
             if EzStalking.settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
-                toggle = true 
+                toggle = true
             elseif EzStalking.settings.log.arenas and revive_counter <= 24 and (raid_id >= 4 and raid_id > 0) then
                 toggle = true
             elseif EzStalking.settings.log.dungeons and revive_counter == 0 and raid_id == 0 then
                 toggle = true
-            else
-                toggle = false
             end
+        elseif IsEncounterLogEnabled() then
+            toggle = true
         end
-    elseif
-        EzStalking.settings.log.housing and GetCurrentHouseOwner() ~= "" then toggle = true
-    else
-        toggle = false
+    elseif EzStalking.settings.log.housing and GetCurrentHouseOwner() ~= "" then
+        toggle = true
     end
 
     EzStalking.toggle_logging(toggle)
@@ -136,7 +132,7 @@ end
 
 local function on_addon_loaded(event, name)
     if name ~= EzStalking.name then return end
-    EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_ADDON_LOADED)
+    EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_ADD_ON_LOADED)
 
     local var_file = "EzStalking_SavedVars"
     EzStalking.settings = ZO_SavedVars:NewAccountWide(var_file, EzStalking.var_version, nil, EzStalking.defaults)
