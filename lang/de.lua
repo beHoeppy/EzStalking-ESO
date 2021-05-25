@@ -24,7 +24,7 @@ SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP = "Aktiviere automatisches Logging in Prüfu
 
 -- [[ Indicator ]]
 SI_EZS_MENU_INDICATOR_SUBHEADING = "Indikator",
-SI_EZS_MENU_INDICATOR_ENABLED = "\t\t\t\t\t Sichtbar",
+SI_EZS_MENU_INDICATOR_ENABLED = "\t\t\t\t\t Aktiviert",
 SI_EZS_MENU_INDICATOR_ENABLED_TOOLTIP = "Zeigt einen kleinen Indikator an wenn logging aktiviert ist.",
 SI_EZS_MENU_INDICATOR_LOCKED = "\t\t\t\t\t Position sperren",
 SI_EZS_MENU_INDICATOR_LOCKED_TOOLTIP = "Sperrt die Position des Indikators.",
@@ -32,8 +32,8 @@ SI_EZS_MENU_INDICATOR_COLOR = "\t\t\t\t\t Farbe",
 SI_EZS_MENU_INDICATOR_COLOR_TOOLTIP = "Die Anzeigefarbe des Indikators.",
 
 -- [[ Messages ]]
-SI_EZS_MSG_LOGGING_ENABLED = "Encounter log aktiviert.",
-SI_EZS_MSG_LOGGING_DISABLED = "Encounter log deaktiviert.",
+SI_EZS_MSG_LOGGING_ENABLED = GetString(SI_ENCOUNTER_LOG_ENABLED_ALERT),
+SI_EZS_MSG_LOGGING_DISABLED = GetString(SI_ENCOUNTER_LOG_DISABLED_ALERT),
 
 --[[
 SI_EZS_MSG_ACTIVATE_HOUSING = "(Spielerhäuser)",

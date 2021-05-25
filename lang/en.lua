@@ -25,7 +25,7 @@ SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP = "Enable automatic logging in trials.",
 
 -- [[ Indicator ]]
 SI_EZS_MENU_INDICATOR_SUBHEADING = "Indicator",
-SI_EZS_MENU_INDICATOR_ENABLED = "\t\t\t\t\t Visible",
+SI_EZS_MENU_INDICATOR_ENABLED = "\t\t\t\t\t Enabled",
 SI_EZS_MENU_INDICATOR_ENABLED_TOOLTIP = "Shows a small indcator on screen if logging is currently enabled",
 SI_EZS_MENU_INDICATOR_LOCKED = "\t\t\t\t\t Lock",
 SI_EZS_MENU_INDICATOR_LOCKED_TOOLTIP = "Locks indicator in place.",
@@ -33,8 +33,8 @@ SI_EZS_MENU_INDICATOR_COLOR = "\t\t\t\t\t Color",
 SI_EZS_MENU_INDICATOR_COLOR_TOOLTIP = "Select the color for the indicator.",
 
 -- [[ Messages ]]
-SI_EZS_MSG_LOGGING_ENABLED = "Encounter log enabled.",
-SI_EZS_MSG_LOGGING_DISABLED = "Encounter log disabled.",
+SI_EZS_MSG_LOGGING_ENABLED = GetString(SI_ENCOUNTER_LOG_ENABLED_ALERT),
+SI_EZS_MSG_LOGGING_DISABLED = GetString(SI_ENCOUNTER_LOG_DISABLED_ALERT),
 
 --[[
 SI_EZS_MSG_ACTIVATE_HOUSING = "(Housing)",

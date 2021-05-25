@@ -22,7 +22,9 @@ function EZS.UI.update_color()
     EZS.UI.indicator_fg:SetEdgeColor(r, g, b, 0.37)
 end
 
-function EZS.UI.toggle_indicator(value)
+function EZS.UI.enable_indicator(value)
+    EZS.UI.hide_indicator(not value)
+    EZS.UI.toggle_fg_color(value)
     if value then
         SCENE_MANAGER:GetScene("hud"):AddFragment(EZS.UI.indicator_fragment)
         SCENE_MANAGER:GetScene("hudui"):AddFragment(EZS.UI.indicator_fragment)
@@ -30,7 +32,20 @@ function EZS.UI.toggle_indicator(value)
         SCENE_MANAGER:GetScene("hud"):RemoveFragment(EZS.UI.indicator_fragment)
         SCENE_MANAGER:GetScene("hudui"):RemoveFragment(EZS.UI.indicator_fragment)
     end
+end
+
+function EZS.UI.hide_indicator(value)
+    EZS.UI.indicator_bg:SetHidden(value)
+    EZS.UI.indicator_fg:SetHidden(value)
     EZS.UI.indicator:SetHidden(value)
+end
+
+function EZS.UI.toggle_fg_color(value)
+    if value then
+        EZS.UI.indicator_fg:SetCenterColor(unpack(settings.indicator.color))
+    else
+        EZS.UI.indicator_fg:SetCenterColor(0, 0, 0, 0)
+    end
 end
 
 function EZS.UI.create_indicator()
@@ -42,7 +57,7 @@ function EZS.UI.create_indicator()
     _indicator:ClearAnchors()
     _indicator:SetMouseEnabled(false)
     _indicator:SetMovable(false)
-    _indicator:SetHidden(false)
+    --_indicator:SetHidden(false)
     _indicator:SetDimensionConstraints(dimensions, dimensions, dimensions, dimensions)
     _indicator:SetHandler("OnMoveStop", function(...) save_position() end)
 
@@ -51,7 +66,7 @@ function EZS.UI.create_indicator()
     _indicator_bg:SetCenterColor(0, 0, 0, 0.25)
     _indicator_bg:SetEdgeColor(0, 0, 0, 0.25)
     _indicator_bg:SetEdgeTexture(nil, 1, 1, 0, 0)
-    _indicator_bg:SetHidden(false)
+    --_indicator_bg:SetHidden(false)
 
     local _indicator_fg = WINDOW_MANAGER:CreateControl("EZS_foreground", _indicator, CT_BACKDROP)
     _indicator_fg:SetAnchor(CENTER, _indicator, CENTER, 0, 0)
@@ -59,13 +74,16 @@ function EZS.UI.create_indicator()
     _indicator_fg:SetCenterColor(1, 0, 0, 0.7)
     _indicator_fg:SetEdgeColor(1, 0, 0, 0.3)
     _indicator_fg:SetEdgeTexture(nil, 1, 1, 0, 0)
-    _indicator_fg:SetHidden(false)
+    --_indicator_fg:SetHidden(false)
 
     EZS.UI.indicator = _indicator
+    EZS.UI.indicator_bg = _indicator_bg
     EZS.UI.indicator_fg = _indicator_fg
     EZS.UI.indicator_fragment = ZO_HUDFadeSceneFragment:New(_indicator)
-    EZS.UI.toggle_indicator(true)
+    EZS.UI.enable_indicator(true)
     set_position()
+
+    EZS.UI.enable_indicator(settings.indicator.enabled)
 end
 
     

@@ -60,7 +60,10 @@ function EZS.build_menu()
             name = GetString(SI_EZS_MENU_LOGGING_ENABLED),
             tooltip = GetString(SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP),
             getFunc = function() return settings.log.enabled end,
-            setFunc = function(value) settings.log.enabled = value end,
+            setFunc = function(value)
+                EZS.register_player_activated(value)
+                settings.log.enabled = value
+            end,
             requiresReload = false,
             default = addon.defaults.log.enabled,
         }
@@ -150,8 +153,8 @@ function EZS.build_menu()
         tooltip = GetString(SI_EZS_MENU_INDICATOR_ENABLED_TOOLTIP),
         getFunc = function() return settings.indicator.enabled end,
         setFunc = function(value)
-            EZS.UI.toggle_indicator(not value)
             settings.indicator.enabled = value
+            EZS.UI.enable_indicator(value)
         end,
         requiresReload = false,
         default = addon.defaults.indicator.enabled,
@@ -163,10 +166,10 @@ function EZS.build_menu()
         tooltip = GetString(SI_EZS_MENU_INDICATOR_LOCKED_TOOLTIP),
         getFunc = function() return settings.indicator.locked end,
         setFunc = function(value)
-            EZS.UI.toggle_indicator(value)
+            settings.indicator.locked = value
+            EZS.UI.toggle_fg_color(not value)
             EZS.UI.indicator:SetMouseEnabled(not value)
             EZS.UI.indicator:SetMovable(not value)
-            settings.indicator.locked = value
         end,
         disabled = function() return not settings.indicator.enabled end,
         requiresReload = false,

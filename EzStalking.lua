@@ -5,7 +5,7 @@ addon = {
     name = "EzStalking",
     title = "Easy Stalking",
     author = "muh",
-    version = "0.2",
+    version = "0.3",
     var_version = 2,
 
     defaults =
@@ -13,16 +13,16 @@ addon = {
         account_wide = false,
         
         log = {
-            enabled = true,
+            enabled = false,
             housing = false,
             arenas = false,
             dungeons = false,
-            trials = true,
+            trials = false,
             veteran_only = true,
         },
 
         indicator = {
-            enabled = true,
+            enabled = false,
             locked = true,
 
             position = {
@@ -46,18 +46,17 @@ local function on_player_activated(event)
         revive_counter = revive_counter == nil and 0 or revive_counter
 
         local raid_id = GetCurrentParticipatingRaidId()
-        raid_id = raid_id > 0 and raid_id or 10
         
-        if settings.veteran_only and is_instance ~= DUNGEON_DIFFICULTY_VETERAN then
+        if settings.log.veteran_only and is_instance ~= DUNGEON_DIFFICULTY_VETERAN then
             toggle = false
         else  
-            if settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id ~= 10 then
+            if settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
                 toggle = true 
                 trigger = GetString(EZS_MSG_ACTIVATE_TRIALS)
-            elseif settings.log.arenas and revive_counter <= 24 and (raid_id >= 4 and raid_id ~= 10) then
+            elseif settings.log.arenas and revive_counter <= 24 and (raid_id >= 4 and raid_id > 0) then
                 toggle = true
                 trigger = GetString(EZS_MSG_ACTIVATE_ARENAS)
-            elseif settings.log.dungeons and revive_counter == 0 and raid_id == 10 then
+            elseif settings.log.dungeons and revive_counter == 0 and raid_id == 0 then
                 toggle = true
                 trigger = GetString(EZS_MSG_ACTIVATE_DUNGEONS)
             else
@@ -65,7 +64,7 @@ local function on_player_activated(event)
             end
         end
     elseif settings.log.housing and GetCurrentHouseOwner() ~= "" then toggle = true
-                trigger = GetString(EZS_MSG_ACTIVATE_HOUSING)
+        trigger = GetString(EZS_MSG_ACTIVATE_HOUSING)
     else
         toggle = false
     end
@@ -76,24 +75,24 @@ end
 function EZS.toggle_logging(value)
     if api_version < 100027 then return end
 
-    if value == nil then
-        toggle = not IsEncounterLogEnabled()
-    else
-        toggle = value
-    end
+    local toggle = (value == nil) and not IsEncounterLogEnabled() or value
 
-    if settings.indicator.enabled and toggle then
-        EZS.UI.indicator_fg:SetCenterColor(unpack(settings.indicator.color))
+    if settings.indicator.enabled then
+        EZS.UI.toggle_fg_color(toggle)
     else
-        EZS.UI.indicator_fg:SetCenterColor(0, 0, 0, 0)
-    end
-    if toggle then
-        CHAT_SYSTEM:AddMessage(GetString(SI_EZS_MSG_LOGGING_ENABLED))
-    else
-        CHAT_SYSTEM:AddMessage(GetString(SI_EZS_MSG_LOGGING_DISABLED))
+        local message = toggle and GetString(SI_EZS_MSG_LOGGING_ENABLED) or GetString(SI_EZS_MSG_LOGGING_DISABLED)
+        CHAT_SYSTEM:AddMessage(message)
     end
 
     SetEncounterLogEnabled(toggle)
+end
+
+function EZS.register_player_activated(value)
+    if value then
+        EVENT_MANAGER:RegisterForEvent(addon.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
+    else
+        EVENT_MANAGER:UnregisterForEvent(addon.name, EVENT_PLAYER_ACTIVATED)
+    end
 end
 
 function EZS:initialize()
@@ -101,9 +100,7 @@ function EZS:initialize()
     EZS.build_menu()
 
     if api_version < 100027 then return end
-    if settings.log.enabled then
-        EVENT_MANAGER:RegisterForEvent(addon.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
-    end
+    EZS.register_player_activated(settings.log.enabled)
 end
 
 local function on_addon_loaded(event, name)
