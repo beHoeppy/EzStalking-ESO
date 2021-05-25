@@ -8,21 +8,28 @@ SI_EZS_MENU_DESCRIPTION = "Wähle aus ob und wo automatisch Encounter Logging ak
 
 SI_EZS_MENU_ACCOUNTWIDE = "Charakterübergreifende Einstellungen",
 SI_EZS_MENU_ACCOUNTWIDE_TOOLTIP = "Nutzt die gleichen Einstellungen für alle Charaktere.",
-SI_EZS_MENU_AUTOMATIC_LOGGING = "Automatisches Logging",
-SI_EZS_MENU_AUTOMATIC_LOGGING_TOOLTIP = "Aktiviere automatisches Logging.",
---[[
-SI_EZS_MENU_VETERAN_ONLY = "Nur Veteranen-Modus",
-SI_EZS_MENU_VETERAN_ONLY_TOOLTIP = "Check if you only want to log veteran difficulty in arenas, dungeons and trials.",
---]]
---SI_EZS_MENU_VETERAN_ONLY_TOOLTIP = "Zur Zeit wird automatisches Logging nur im Veteranen-Modus unterstützt.",
-SI_EZS_MENU_HOUSING = "Spielerhäuser",
-SI_EZS_MENU_HOUSING_TOOLTIP = "Aktiviere automatisches Logging in Spielerhäusern.",
-SI_EZS_MENU_ARENAS = "Arenen",
-SI_EZS_MENU_ARENAS_TOOLTIP = "Aktiviere automatisches Logging in Solo Arenen.",
-SI_EZS_MENU_DUNGEONS = "Verliese",
-SI_EZS_MENU_DUNGEONS_TOOLTIP = "Aktiviere automatisches Logging in Verliesen.",
-SI_EZS_MENU_TRIALS = "Prüfungen",
-SI_EZS_MENU_TRIALS_TOOLTIP = "Aktiviere automatisches Logging in Prüfungen.",
+
+SI_EZS_MENU_LOGGING_ENABLED = "Automatisches Logging",
+SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP = "Aktiviere automatisches Logging.",
+
+SI_EZS_MENU_LOCATION_SUBHEADER = "",
+SI_EZS_MENU_LOCATION_HOUSING = "\t\t\t\t\t Spielerhäuser",
+SI_EZS_MENU_LOCATION_HOUSING_TOOLTIP = "Aktiviere automatisches Logging in Spielerhäusern.",
+SI_EZS_MENU_LOCATION_ARENAS = "\t\t\t\t\t Arenen",
+SI_EZS_MENU_LOCATION_ARENAS_TOOLTIP = "Aktiviere automatisches Logging in Solo Arenen.",
+SI_EZS_MENU_LOCATION_DUNGEONS = "\t\t\t\t\t Verliese",
+SI_EZS_MENU_LOCATION_DUNGEONS_TOOLTIP = "Aktiviere automatisches Logging in Verliesen.",
+SI_EZS_MENU_LOCATION_TRIALS = "\t\t\t\t\t Prüfungen",
+SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP = "Aktiviere automatisches Logging in Prüfungen.",
+
+-- [[ Indicator ]]
+SI_EZS_MENU_INDICATOR_SUBHEADING = "Indikator",
+SI_EZS_MENU_INDICATOR_ENABLED = "\t\t\t\t\t Sichtbar",
+SI_EZS_MENU_INDICATOR_ENABLED_TOOLTIP = "Zeigt einen kleinen Indikator an wenn logging aktiviert ist.",
+SI_EZS_MENU_INDICATOR_LOCKED = "\t\t\t\t\t Position sperren",
+SI_EZS_MENU_INDICATOR_LOCKED_TOOLTIP = "Sperrt die Position des Indikators.",
+SI_EZS_MENU_INDICATOR_COLOR = "\t\t\t\t\t Farbe",
+SI_EZS_MENU_INDICATOR_COLOR_TOOLTIP = "Die Anzeigefarbe des Indikators.",
 
 -- [[ Messages ]]
 SI_EZS_MSG_LOGGING_ENABLED = "Encounter log aktiviert.",
@@ -42,3 +49,11 @@ SI_BINDING_NAME_EZS_TOGGLE_LOGGING = "De-/Aktiviere Encounterlog",
 for i, v in pairs(strings) do
     ZO_CreateStringId(i, v)
 end
+
+
+
+--[[
+SI_EZS_MENU_VETERAN_ONLY = "Nur Veteranen-Modus",
+SI_EZS_MENU_VETERAN_ONLY_TOOLTIP = "Check if you only want to log veteran difficulty in arenas, dungeons and trials.",
+--]]
+--SI_EZS_MENU_VETERAN_ONLY_TOOLTIP = "Zur Zeit wird automatisches Logging nur im Veteranen-Modus unterstützt.",

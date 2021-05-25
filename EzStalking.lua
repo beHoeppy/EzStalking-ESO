@@ -5,104 +5,88 @@ addon = {
     name = "EzStalking",
     title = "Easy Stalking",
     author = "muh",
-    version = "0.1",
-    var_version = 1,
+    version = "0.2",
+    var_version = 2,
 
     defaults =
     {
-        automatic_logging = true,
         account_wide = false,
-        log_housing = false,
-        log_arenas = false,
-        log_dungeons = false,
-        log_trials = true,
-        veteran_only = true,
+        
+        log = {
+            enabled = true,
+            housing = false,
+            arenas = false,
+            dungeons = false,
+            trials = true,
+            veteran_only = true,
+        },
+
+        indicator = {
+            enabled = true,
+            locked = true,
+
+            position = {
+                x = 500,
+                y = 500,
+            },
+            color = {1, 0, 0, 0.7},
+        },
     },
 }
 
 local api_version = GetAPIVersion()
 
-local is_raid = false
-local player_activated_fired = false
-local raid_participation_fired = false
-
-local function handle_automatic_activation()
+local function on_player_activated(event) 
     local is_instance = GetCurrentZoneDungeonDifficulty()
-    local current = IsEncounterLogEnabled()
     local toggle = false
     local trigger = ""
 
     if is_instance ~= DUNGEON_DIFFICULTY_NONE then
+        local revive_counter = GetCurrentRaidStartingReviveCounters()
+        revive_counter = revive_counter == nil and 0 or revive_counter
+
+        local raid_id = GetCurrentParticipatingRaidId()
+        raid_id = raid_id > 0 and raid_id or 10
+        
         if settings.veteran_only and is_instance ~= DUNGEON_DIFFICULTY_VETERAN then
             toggle = false
         else  
-            if settings.log_trials and (is_raid or IsPlayerInRaid()) then
-                trigger = GetString(SI_EZS_MSG_ACTIVATE_TRIALS)
+            if settings.log.trials and (revive_counter > 24 or raid_id < 4) and raid_id ~= 10 then
+                toggle = true 
+                trigger = GetString(EZS_MSG_ACTIVATE_TRIALS)
+            elseif settings.log.arenas and revive_counter <= 24 and (raid_id >= 4 and raid_id ~= 10) then
                 toggle = true
-            elseif settings.log_dungeons and not is_raid and IsActiveWorldGroupOwnable() then 
-                trigger = GetString(SI_EZS_MSG_ACTIVATE_DUNGEONS)
+                trigger = GetString(EZS_MSG_ACTIVATE_ARENAS)
+            elseif settings.log.dungeons and revive_counter == 0 and raid_id == 10 then
                 toggle = true
-            elseif settings.log_arenas and not IsActiveWorldGroupOwnable() then
-                trigger = GetString(SI_EZS_MSG_ACTIVATE_ARENAS)
-                toggle = true
+                trigger = GetString(EZS_MSG_ACTIVATE_DUNGEONS)
+            else
+                toggle = false
             end
         end
-    elseif settings.log_housing and GetCurrentHouseOwner() ~= "" then
-        trigger = GetString(SI_EZS_MSG_ACTIVATE_HOUSING)
-        toggle = true
+    elseif settings.log.housing and GetCurrentHouseOwner() ~= "" then toggle = true
+                trigger = GetString(EZS_MSG_ACTIVATE_HOUSING)
     else
         toggle = false
     end
 
-    --[[
-    local toggle_str = toggle and "true" or "false"
-    local current_str = current and "true" or "false"
-    CHAT_SYSTEM:AddMessage(toggle_str .. " / " .. current_str)
-    --]]
-    if current ~= toggle then
-        if toggle then
-            CHAT_SYSTEM:AddMessage(GetString(SI_EZS_MSG_LOGGING_ENABLED) .. " " .. trigger)
-        else
-            CHAT_SYSTEM:AddMessage(GetString(SI_EZS_MSG_LOGGING_DISABLED))
-        end
-    end
-
-    SetEncounterLogEnabled(toggle)
-
-    is_raid = false
+    EZS.toggle_logging(toggle)
 end
 
-local function safety_net()
-    if raid_participation_fired and player_activated_fired and not IsEncounterLogEnabled() then handle_automatic_activation() end
-end
-
-local function reset_raid_participation_fired()
-    raid_participation_fired = false
-end
-
-local function on_raid_participation(event)
-    if IsActiveWorldGroupOwnable() then is_raid = true end
-    raid_participation_fired = true
-    zo_callLater(reset_raid_participation_fired, 7000)
-    zo_callLater(safety_net, 3000)
-end
-
-local function reset_player_activated_fired()
-    player_activated_fired = false
-end
-
-local function on_player_activated(event) 
-    player_activated_fired = true
-    zo_callLater(reset_player_activated_fired, 7000)
-    zo_callLater(handle_automatic_activation, 1000)
-end
-
-function EZS.toggle_logging()
+function EZS.toggle_logging(value)
     if api_version < 100027 then return end
 
-    local toggle = IsEncounterLogEnabled()
-    toggle = not toggle
+    if value == nil then
+        toggle = not IsEncounterLogEnabled()
+    else
+        toggle = value
+    end
 
+    if settings.indicator.enabled and toggle then
+        EZS.UI.indicator_fg:SetCenterColor(unpack(settings.indicator.color))
+    else
+        EZS.UI.indicator_fg:SetCenterColor(0, 0, 0, 0)
+    end
     if toggle then
         CHAT_SYSTEM:AddMessage(GetString(SI_EZS_MSG_LOGGING_ENABLED))
     else
@@ -113,13 +97,11 @@ function EZS.toggle_logging()
 end
 
 function EZS:initialize()
+    EZS.UI.create_indicator()
     EZS.build_menu()
 
     if api_version < 100027 then return end
-    if settings.automatic_logging then
-        if settings.log_trials then
-            EVENT_MANAGER:RegisterForEvent(addon.name, EVENT_RAID_PARTICIPATION_UPDATE, on_raid_participation)
-        end
+    if settings.log.enabled then
         EVENT_MANAGER:RegisterForEvent(addon.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
     end
 end
