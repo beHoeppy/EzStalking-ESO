@@ -8,7 +8,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.2.9'
+EzStalking.version      = '1.3.0'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -18,6 +18,9 @@ EzStalking.defaults = {
     log = {
         enabled = false,
         housing = false,
+        battlegrounds = false,
+        imperial_city = false,
+        cyrodiil = false,
         arenas = false,
         dungeons = false,
         trials = false,
@@ -37,7 +40,7 @@ EzStalking.defaults = {
     },
 }
 
-local InstanceType = { None = 0, Trial = 1, Arena = 2, Dungeon = 3}
+local InstanceType = { None = 0, Trial = 1, Arena = 2, Dungeon = 3 }
 
 local function determine_instance_type()
     local revive_counter = GetCurrentRaidStartingReviveCounters()
@@ -97,6 +100,12 @@ local function on_player_activated(event)
         end       
     elseif EzStalking.settings.log.housing and GetCurrentHouseOwner() ~= "" then
         toggle = true
+    elseif EzStalking.settings.log.battlegrounds and GetCurrentBattlegroundId() > 0 then
+        toggle = true
+    elseif EzStalking.settings.log.imperial_city and IsInImperialCity() then
+        toggle = true
+    elseif EzStalking.settings.log.cyrodiil and IsInCyrodiil() then
+        toggle = true
     end
 
     EzStalking.toggle_logging(toggle)
@@ -152,7 +161,7 @@ function EzStalking.enable_automatic_logging(value)
 end
 
 
--- [[ 
+--[[ 
 EzStalking.logout_delayed = false
 local function delay_logout()
     while EzStalking.logout_delayed == false do 
@@ -198,7 +207,7 @@ function EzStalking:initialize()
       end)
 
     EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
-    EzStalking.show_upload_reminder_dialog(EzStalking.settings.upload_reminder)
+    --EzStalking.show_upload_reminder_dialog(EzStalking.settings.upload_reminder)
 end
 
 local function on_addon_loaded(event, name)

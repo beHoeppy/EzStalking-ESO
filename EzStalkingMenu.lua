@@ -65,6 +65,7 @@ function EzStalking.Menu:initialize()
         requiresReload = false,
         default = EzStalking.defaults.log.enabled,
     }
+    --[[
     local libDialog = LibDialog
     if libDialog then
         options_table[#options_table+1] =
@@ -81,6 +82,7 @@ function EzStalking.Menu:initialize()
             default = EzStalking.defaults.upload_reminder,
         }
     end
+    --]]
     --[[
     options_table[#options_table+1] =
     {
@@ -143,6 +145,39 @@ function EzStalking.Menu:initialize()
         disabled = function() return not EzStalking.settings.log.enabled end,
         requiresReload = false,
         default = EzStalking.defaults.log.trials,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = L.menu.location.battlegrounds,
+        tooltip = L.menu.location.battlegrounds_tooltip,
+        getFunc = function() return EzStalking.settings.log.battlegrounds end,
+        setFunc = function(value) EzStalking.settings.log.battlegrounds = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
+        requiresReload = false,
+        default = EzStalking.defaults.log.battlegrounds,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = L.menu.location.imperial_city,
+        tooltip = L.menu.location.imperial_city_tooltip,
+        getFunc = function() return EzStalking.settings.log.imperial_city end,
+        setFunc = function(value) EzStalking.settings.log.imperial_city = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
+        requiresReload = false,
+        default = EzStalking.defaults.log.imperial_city,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = L.menu.location.cyrodiil,
+        tooltip = L.menu.location.cyrodiil_tooltip,
+        getFunc = function() return EzStalking.settings.log.cyrodiil end,
+        setFunc = function(value) EzStalking.settings.log.cyrodiil = value end,
+        disabled = function() return not EzStalking.settings.log.enabled end,
+        requiresReload = false,
+        default = EzStalking.defaults.log.cyrodiil,
     }
     options_table[#options_table+1] =
     {
