@@ -5,13 +5,13 @@ addon = {
     name = "EzStalking",
     title = "Easy Stalking",
     author = "muh",
-    version = "0.3",
+    version = "1.0",
     var_version = 2,
 
     defaults =
     {
         account_wide = false,
-        
+
         log = {
             enabled = false,
             housing = false,
@@ -34,9 +34,7 @@ addon = {
     },
 }
 
-local api_version = GetAPIVersion()
-
-local function on_player_activated(event) 
+local function on_player_activated(event)
     local is_instance = GetCurrentZoneDungeonDifficulty()
     local toggle = false
     local trigger = ""
@@ -46,7 +44,7 @@ local function on_player_activated(event)
         revive_counter = revive_counter == nil and 0 or revive_counter
 
         local raid_id = GetCurrentParticipatingRaidId()
-        
+
         if settings.log.veteran_only and is_instance ~= DUNGEON_DIFFICULTY_VETERAN then
             toggle = false
         else  
@@ -73,8 +71,6 @@ local function on_player_activated(event)
 end
 
 function EZS.toggle_logging(value)
-    if api_version < 100027 then return end
-
     local toggle = (value == nil) and not IsEncounterLogEnabled() or value
 
     if settings.indicator.enabled then
@@ -99,7 +95,6 @@ function EZS:initialize()
     EZS.UI.create_indicator()
     EZS.build_menu()
 
-    if api_version < 100027 then return end
     EZS.register_player_activated(settings.log.enabled)
 end
 
@@ -113,4 +108,5 @@ local function on_addon_loaded(event, name)
     EZS:initialize()
 end
 
+SLASH_COMMANDS["/ezlog"] = function(args) EZS.toggle_logging() end
 EVENT_MANAGER:RegisterForEvent(addon.name, EVENT_ADD_ON_LOADED, on_addon_loaded)

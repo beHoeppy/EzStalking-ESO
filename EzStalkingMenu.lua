@@ -17,125 +17,117 @@ function EZS.build_menu()
     LAM:RegisterAddonPanel(addon.name, panel_data)
 
     local options_table = { }
-    if GetAPIVersion() < 100027 then
-        options_table[#options_table+1] =
-        {
-            type = "description",
-            text = GetString(SI_EZS_PRE_ELSWEYR),
-        }
-    else
-        options_table[#options_table+1] =
-        {
-            type = "header",
-            name = GetString(SI_EZS_MENU_HEADER),
-        }
-        -- [[
-        options_table[#options_table+1] =
-        {
-            type = "description",
-            text = GetString(SI_EZS_MENU_DESCRIPTION),
-        }
-        --]]
-        options_table[#options_table+1] =
-        {
-            type = "divider",
-        }
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_ACCOUNTWIDE),
-            tooltip = GetString(SI_EZS_MENU_ACCOUNTWIDE_TOOLTIP),
-            getFunc = function() return EzStalking_SavedVars.Default[GetDisplayName()]['$AccountWide']["account_wide"] end,
-            setFunc = function(value) EzStalking_SavedVars.Default[GetDisplayName()]['$AccountWide']["account_wide"] = value end,
-            requiresReload = true,
-            default = addon.defaults.account_wide,
-        }
-        options_table[#options_table+1] =
-        {
-            type = "divider",
-        }
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_LOGGING_ENABLED),
-            tooltip = GetString(SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP),
-            getFunc = function() return settings.log.enabled end,
-            setFunc = function(value)
-                EZS.register_player_activated(value)
-                settings.log.enabled = value
-            end,
-            requiresReload = false,
-            default = addon.defaults.log.enabled,
-        }
-        --[[
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_LOCATION_VETERAN_ONLY),
-            tooltip = GetString(SI_EZS_MENU_LOCATION_VETERAN_ONLY_TOOLTIP),
-            getFunc = function() return settings.veteran_only end,
-            setFunc = function(value) settings.veteran_only = value end,
-            --disabled = function() return not settings.log.enabled end,
-            disabled = true,
-            requiresReload = false,
-            default = addon.defaults.veteran_only,
-        }
-        --]]
-        options_table[#options_table+1] =
-        {
-            type = "divider",
-        }
-        options_table[#options_table+1] =
-        {
-            type = "description",
-            title = GetString(SI_EZS_MENU_LOCATION_SUBHEADER),
-            width = "half",
-        }
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_LOCATION_HOUSING),
-            tooltip = GetString(SI_EZS_MENU_LOCATION_HOUSING_TOOLTIP),
-            getFunc = function() return settings.log.housing end,
-            setFunc = function(value) settings.log.housing = value end,
-            disabled = function() return not settings.log.enabled end,
-            requiresReload = false,
-            default = addon.defaults.log.housing,
-        }
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_LOCATION_ARENAS),
-            tooltip = GetString(SI_EZS_MENU_LOCATION_ARENAS_TOOLTIP),
-            getFunc = function() return settings.log.arenas end,
-            setFunc = function(value) settings.log.arenas = value end,
-            disabled = function() return not settings.log.enabled end,
-            requiresReload = false,
-            default = addon.defaults.log.arenas,
-        }
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_LOCATION_DUNGEONS),
-            tooltip = GetString(SI_EZS_MENU_LOCATION_DUNGEONS_TOOLTIP),
-            getFunc = function() return settings.log.dungeons end,
-            setFunc = function(value) settings.log.dungeons = value end,
-            disabled = function() return not settings.log.enabled end,
-            requiresReload = false,
-            default = addon.defaults.log.dungeons,
-        }
-        options_table[#options_table+1] =
-        {
-            type = "checkbox",
-            name = GetString(SI_EZS_MENU_LOCATION_TRIALS),
-            tooltip = GetString(SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP),
-            getFunc = function() return settings.log.trials end,
-            setFunc = function(value) settings.log.trials = value end,
-            disabled = function() return not settings.log.enabled end,
-            requiresReload = false,
-            default = addon.defaults.log.trials,
-        }
-    end
+    options_table[#options_table+1] =
+    {
+        type = "header",
+        name = GetString(SI_EZS_MENU_HEADER),
+    }
+    -- [[
+    options_table[#options_table+1] =
+    {
+        type = "description",
+        text = GetString(SI_EZS_MENU_DESCRIPTION),
+    }
+    --]]
+    options_table[#options_table+1] =
+    {
+        type = "divider",
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_ACCOUNTWIDE),
+        tooltip = GetString(SI_EZS_MENU_ACCOUNTWIDE_TOOLTIP),
+        getFunc = function() return EzStalking_SavedVars.Default[GetDisplayName()]['$AccountWide']["account_wide"] end,
+        setFunc = function(value) EzStalking_SavedVars.Default[GetDisplayName()]['$AccountWide']["account_wide"] = value end,
+        requiresReload = true,
+        default = addon.defaults.account_wide,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "divider",
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_LOGGING_ENABLED),
+        tooltip = GetString(SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP),
+        getFunc = function() return settings.log.enabled end,
+        setFunc = function(value)
+            EZS.register_player_activated(value)
+            settings.log.enabled = value
+        end,
+        requiresReload = false,
+        default = addon.defaults.log.enabled,
+    }
+    --[[
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_LOCATION_VETERAN_ONLY),
+        tooltip = GetString(SI_EZS_MENU_LOCATION_VETERAN_ONLY_TOOLTIP),
+        getFunc = function() return settings.veteran_only end,
+        setFunc = function(value) settings.veteran_only = value end,
+        --disabled = function() return not settings.log.enabled end,
+        disabled = true,
+        requiresReload = false,
+        default = addon.defaults.veteran_only,
+    }
+    --]]
+    options_table[#options_table+1] =
+    {
+        type = "divider",
+    }
+    options_table[#options_table+1] =
+    {
+        type = "description",
+        title = GetString(SI_EZS_MENU_LOCATION_SUBHEADER),
+        width = "half",
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_LOCATION_HOUSING),
+        tooltip = GetString(SI_EZS_MENU_LOCATION_HOUSING_TOOLTIP),
+        getFunc = function() return settings.log.housing end,
+        setFunc = function(value) settings.log.housing = value end,
+        disabled = function() return not settings.log.enabled end,
+        requiresReload = false,
+        default = addon.defaults.log.housing,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_LOCATION_ARENAS),
+        tooltip = GetString(SI_EZS_MENU_LOCATION_ARENAS_TOOLTIP),
+        getFunc = function() return settings.log.arenas end,
+        setFunc = function(value) settings.log.arenas = value end,
+        disabled = function() return not settings.log.enabled end,
+        requiresReload = false,
+        default = addon.defaults.log.arenas,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_LOCATION_DUNGEONS),
+        tooltip = GetString(SI_EZS_MENU_LOCATION_DUNGEONS_TOOLTIP),
+        getFunc = function() return settings.log.dungeons end,
+        setFunc = function(value) settings.log.dungeons = value end,
+        disabled = function() return not settings.log.enabled end,
+        requiresReload = false,
+        default = addon.defaults.log.dungeons,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        name = GetString(SI_EZS_MENU_LOCATION_TRIALS),
+        tooltip = GetString(SI_EZS_MENU_LOCATION_TRIALS_TOOLTIP),
+        getFunc = function() return settings.log.trials end,
+        setFunc = function(value) settings.log.trials = value end,
+        disabled = function() return not settings.log.enabled end,
+        requiresReload = false,
+        default = addon.defaults.log.trials,
+    }
     options_table[#options_table+1] =
     {
         type = "divider",
@@ -189,5 +181,6 @@ function EZS.build_menu()
         requiresReload = false,
         default = addon.defaults.indicator.color,
     }
+
     LAM:RegisterOptionControls(addon.name, options_table)
 end

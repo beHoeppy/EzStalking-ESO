@@ -1,7 +1,5 @@
 local strings = {
 
-SI_EZS_PRE_ELSWEYR = "The feature this addon is using will only be implemented with the Elsweyr update.\n\nThis release is intended for use on the PTS.\nIf you meant to install it for PTS, you have to copy the EzStalking folder into your C:\\Users\\username\\Documents\\Elder Scrolls Online\\pts\\AddOns Folder.",
-    
 -- [[ Menu ]]
 SI_EZS_MENU_HEADER = "Settings",
 SI_EZS_MENU_DESCRIPTION = "Select if and where you want Encounter Logging to automatically start.\nPlease note: If enabled, it automatically disables logging outside of specified places.",

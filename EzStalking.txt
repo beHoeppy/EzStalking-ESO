@@ -1,7 +1,7 @@
 ## Title: Easy Stalking
 ## Author: muh
 ## Description: Automatically starts combat logging when entering specific content.
-## Version: 0.3
+## Version: 1.0
 ## APIVersion: 100027
 ## SavedVariables: EzStalking_SavedVars
 ## DependsOn: LibAddonMenu-2.0 LibStub

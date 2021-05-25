@@ -1,6 +1,4 @@
 local strings = {
-    
-SI_EZS_PRE_ELSWEYR = "Die Funktion die dieses AddOn nutzt wird erst mit der Elsweyr Erweiterung implementiert. \n\nDiese Version is zur Zeit für den PTS vorgesehen.\nFalls du dieses Addon für den PTS installieren wolltest, kopiere den EzStalking Ordner nach C:\\Benutzer\\Benuztername\\Meine Dokumente\\Elder Scrolls Online\\pts\\AddOns.",
 
 -- [[ Menu ]]
 SI_EZS_MENU_HEADER = "Einstellungen",
@@ -12,7 +10,7 @@ SI_EZS_MENU_ACCOUNTWIDE_TOOLTIP = "Nutzt die gleichen Einstellungen für alle Ch
 SI_EZS_MENU_LOGGING_ENABLED = "Automatisches Logging",
 SI_EZS_MENU_LOGGING_ENABLED_TOOLTIP = "Aktiviere automatisches Logging.",
 
-SI_EZS_MENU_LOCATION_SUBHEADER = "",
+SI_EZS_MENU_LOCATION_SUBHEADER = "Einsatzorte",
 SI_EZS_MENU_LOCATION_HOUSING = "\t\t\t\t\t Spielerhäuser",
 SI_EZS_MENU_LOCATION_HOUSING_TOOLTIP = "Aktiviere automatisches Logging in Spielerhäusern.",
 SI_EZS_MENU_LOCATION_ARENAS = "\t\t\t\t\t Arenen",
