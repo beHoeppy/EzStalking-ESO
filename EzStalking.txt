@@ -1,8 +1,8 @@
 ## Title: Easy Stalking
 ## Author: muh
-## Description: Automatically starts combat logging when entering specific content.
-## Version: 1.3.0
-## APIVersion: 100034 100035
+## Description: Provides options to help you start '/encounterlog'ging things relevant to you.
+## Version: 1.4.0
+## APIVersion: 100035 101031
 ## SavedVariables: EzStalking_SavedVars
 ## DependsOn: LibAddonMenu-2.0>=28
 ## OptionalDependsOn: LibDialog
