@@ -25,6 +25,8 @@ EzStalking.defaults = {
         dungeons = false,
         trials = false,
         veteran_only = true,
+        use_dialog = false,
+        remember_zone = false,
     },
 
     indicator = {
@@ -45,7 +47,7 @@ local InstanceType = { None = 0, Trial = 1, Arena = 2, Dungeon = 3 }
 local function determine_instance_type()
     local revive_counter = GetCurrentRaidStartingReviveCounters()
     revive_counter = revive_counter == nil and 0 or revive_counter
-    
+
     local raid_id = GetCurrentParticipatingRaidId()
     local instance_type = InstanceType.None
 
@@ -60,20 +62,26 @@ local function determine_instance_type()
     return instance_type
 end
 
+local function current_zone()
+    return GetZoneId(GetUnitZoneIndex("player"))
+ end
+
 local function on_raid_trial_started(event)
     EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED)
     local toggle = false
-    
-    instance_type = determine_instance_type()
+
+    local instance_type = determine_instance_type()
     if EzStalking.settings.log.trials and instance_type == InstanceType.Trial then
         toggle = true
     elseif EzStalking.settings.log.arenas and instance_type == InstanceType.Arena then
         toggle = true
     end
 
-    EzStalking.toggle_logging(toggle)
+    EzStalking.auto_toggle_or_confirm(toggle)
 end
 
+EzStalking.remembered_zone = nil
+EzStalking.previous_decision = nil
 local function on_player_activated(event)
     local is_instance = GetCurrentZoneDungeonDifficulty()
     local toggle = false
@@ -81,7 +89,9 @@ local function on_player_activated(event)
     if is_instance ~= DUNGEON_DIFFICULTY_NONE then
         if IsEncounterLogEnabled() then
             toggle = true
-        elseif is_instance == DUNGEON_DIFFICULTY_VETERAN or not EzStalking.settings.log.veteran_only then
+        elseif is_instance == DUNGEON_DIFFICULTY_NORMAL and not EzStalking.settings.log.veteran_only then
+            toggle = true
+        elseif is_instance == DUNGEON_DIFFICULTY_VETERAN then
             local instance_type = determine_instance_type()
 
             if EzStalking.settings.log.trials and instance_type == InstanceType.Trial then
@@ -91,13 +101,13 @@ local function on_player_activated(event)
             elseif EzStalking.settings.log.dungeons and instance_type == InstanceType.Dungeon then
                 toggle = true
             end
-    
+
             -- repeated check to make sure logging really starts when the trial/arena starts
             -- NOTE: potentially look into EVENT_RAID_PARTICIPATION_UPDATE instead 
             if EzStalking.settings.log.trials or EzStalking.settings.log.arenas then
                 EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
-            end 
-        end       
+            end
+        end
     elseif EzStalking.settings.log.housing and GetCurrentHouseOwner() ~= "" then
         toggle = true
     elseif EzStalking.settings.log.battlegrounds and GetCurrentBattlegroundId() > 0 then
@@ -108,14 +118,71 @@ local function on_player_activated(event)
         toggle = true
     end
 
-    EzStalking.toggle_logging(toggle)
+    EzStalking.auto_toggle_or_confirm(toggle, 3)
+end
+
+function EzStalking.auto_toggle_or_confirm(value, delay)
+    delay = delay == nil and 1000 or delay * 1000
+    if value and EzStalking.remembered_zone ~= current_zone() then
+        EzStalking.toggle_logging(false)
+        EzStalking.remembered_zone = nil
+        EzStalking.previous_decision = nil
+    end
+
+    if libDialog and value
+    and (EzStalking.settings.log.use_dialog or not EzStalking.settings.log.veteran_only)
+    and EzStalking.previous_decision == nil
+    then
+        if not IsEncounterLogEnabled() and value then
+            zo_callLater(function()
+                libDialog:ShowDialog(EzStalking.name, EzStalking.name .. "LoggingConfirmationDialog")
+            end, delay)
+        end
+    else
+        if EzStalking.settings.log.remember_zone and EzStalking.previous_decision ~= nil and value then
+            value = EzStalking.previous_decision
+        end
+        EzStalking.toggle_logging(value)
+    end
 end
 
 function EzStalking.toggle_logging(value)
+    -- when value is true and logging was already enabled, it remains enabled.
     local toggle = (value == nil) and not IsEncounterLogEnabled() or value
+    if value then EzStalking.remembered_zone = current_zone() end
+
     SetEncounterLogEnabled(toggle)
 end
 EzStalking_keybind_toggle = EzStalking.toggle_logging
+
+local function initialize_confirmation_dialog()
+    if libDialog then
+        local dialog_name = EzStalking.name .. "LoggingConfirmationDialog"
+        libDialog:RegisterDialog(EzStalking.name, dialog_name,
+                                 L.dialog.logging.title, L.dialog.logging.text,
+                                 function() -- callBackYes
+                                    EzStalking.toggle_logging(true)
+                                    EzStalking.confirmation_dialog_callback(true)
+                                 end,
+                                 function() -- callBackNo
+                                    EzStalking.confirmation_dialog_callback(false)
+                                 end)
+    end
+end
+
+function EzStalking.confirmation_dialog_callback(value)
+    EzStalking.previous_decision = value
+    EzStalking.remembered_zone = current_zone()
+
+    if not EzStalking.settings.log.remember_zone then
+        zo_callLater(function()
+            if EzStalking.remembered_zone ~= current_zone() then
+                EzStalking.remembered_zone = nil
+            end
+            EzStalking.previous_decision = nil
+        end, (15 * 60 * 1000)) --check after 30 minutes
+    end
+end
 
 function EzStalking.set_anonymity(value)
     value = value and "1" or "0"
@@ -161,7 +228,7 @@ function EzStalking.enable_automatic_logging(value)
 end
 
 
---[[ 
+--[[
 EzStalking.logout_delayed = false
 local function delay_logout()
     while EzStalking.logout_delayed == false do 
@@ -189,7 +256,6 @@ function EzStalking.show_upload_reminder_dialog(value)
 end
 --]]
 
-
 function EzStalking:initialize()
     EzStalking.UI:initialize()
     EzStalking.Menu:initialize()
@@ -205,6 +271,8 @@ function EzStalking:initialize()
             end
         return false
       end)
+
+    initialize_confirmation_dialog()
 
     EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
     --EzStalking.show_upload_reminder_dialog(EzStalking.settings.upload_reminder)

@@ -15,6 +15,15 @@ L.menu.accountwide_tooltip              = "Nutzt die gleichen Einstellungen für
 L.menu.logging_enabled                  = "Automatisches aufzeichnen"
 L.menu.logging_enabled_tooltip          = "Aktiviere automatisches aufzeichnen."
 
+L.menu.veteran_only                     = "Normale Instanzen Aufzeichnen (Bestätigungsdialog)"
+L.menu.veteran_only_tooltip             = "Fragt beim betreten jeder normalen Instanz ob aufgezeichnet werden soll."
+
+L.menu.use_dialog                       = "Bestätigungsdialog"
+L.menu.use_dialog_tooltip               = "Fragt ob du eine Instanz Aufzeichnen willst anstatt automatisch aufzuzeichnen."
+
+L.menu.remember_zone                    = "Für Instanz-Zone merken"
+L.menu.remember_zone_tooltip            = "Fragt nur beim ersten Betreten einer Instanz und merkt sich diese Entscheidung bis eine andere instanziierte Zone betreten wird."
+
 L.menu.location = { }                   -- [[ Location Menu]]
 L.menu.location.header                  = "Einsatzorte"
 local substring_housing                 = "Spielerhäuser"
@@ -45,7 +54,6 @@ local substring_cyrodiil                = "Cyrodiil"
 L.menu.location.cyrodiil_tooltip        = "Aktiviere automatisches aufzeichnen in Cyrodiil"
 L.menu.location.cyrodiil                = substring_cyrodiil -- do not edit
 
-
 L.menu.indicator = { }                  -- [[ Indicator Menu ]]
 L.menu.indicator.header                 = "Indikator"
 local substring_enabled                 = "Aktiviert"
@@ -59,6 +67,12 @@ L.menu.indicator.locked                 = substring_locked -- do not edit
 local substring_color                   = "Farbe"
 L.menu.indicator.color_tooltip          = "Die Anzeigefarbe des Indikators."
 L.menu.indicator.color                  = substring_color -- do not edit
+
+-- [[ Dialog ]]
+L.dialog = { }
+L.dialog.logging = { }                  -- [[ Logging Dialog ]]
+L.dialog.logging.title                  = "Encounterlog"
+L.dialog.logging.text                   = "Möchtest du diese Instanz aufzeichnen?"
 
 -- [[ Slash Command Arguments]]
 L.slash_command = { }                   -- [[ Slash Command Arguments]]

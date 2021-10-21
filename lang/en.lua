@@ -15,6 +15,15 @@ L.menu.accountwide_tooltip              = "Share settings across all characters.
 L.menu.logging_enabled                  = "Automatic logging"
 L.menu.logging_enabled_tooltip          = "Enable automatic encounter logging"
 
+L.menu.veteran_only                     = "Log normal runs (w/ confirmation)"
+L.menu.veteran_only_tooltip             = "Asks you on every normal instance you join if you want to log the run."
+
+L.menu.use_dialog                       = "Confirmation dialog"
+L.menu.use_dialog_tooltip               = "Asks if you want to log a run instead of automatically logging."
+
+L.menu.remember_zone                    = "Remember Zone"
+L.menu.remember_zone_tooltip            = "Remember your decision for instanced zone so it will not ask again until you enter another instanced zone."
+
 L.menu.location = { }                   -- [[ Location Menu]]
 L.menu.location.header                  = "Locations"
 local substring_housing                 = "Player Housing"
@@ -59,11 +68,13 @@ local substring_color                   = "Color"
 L.menu.indicator.color_tooltip          = "Select the color for the indicator."
 L.menu.indicator.color                  = substring_color -- do not edit
 
+-- [[ Dialogs ]]
 L.dialog = { }
-L.dialog.title                          = "Encounterlog Reminder"
-L.dialog.text                           = "Don't forget to upload your Encounterlog file!"
+L.dialog.logging = { }                  -- [[ Logging Dialog ]]
+L.dialog.logging.title                  = "Encounterlog"
+L.dialog.logging.text                   = "Do you want to start logging this run?"
 
--- [[ Slash Command Arguments]]
+-- [[ Slash Command Arguments ]]
 L.slash_command = { }                   -- [[ Slash Command Arguments]]
 L.slash_command.lock                    = "lock"
 L.slash_command.unlock                  = "unlock"
