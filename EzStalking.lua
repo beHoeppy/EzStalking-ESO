@@ -8,7 +8,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.4.2'
+EzStalking.version      = '1.4.3'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -91,7 +91,7 @@ local function on_raid_trial_started(event)
 
     local instance_type = determine_instance_type()
     if (instance_type == InstanceType.Arena and EzStalking.settings.log.arenas)
-            or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials)
+        or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials)
     then
         toggle = true
     end
@@ -103,21 +103,24 @@ EzStalking.remembered_zone = nil
 EzStalking.previous_decision = nil
 local function on_player_activated()
     local toggle = false
+    local instance_difficulty = nil
 
     local zone_type = determine_zone_type()
     if zone_type == ZoneType.Instance then
         local instance_type = determine_instance_type()
+        instance_difficulty = GetCurrentZoneDungeonDifficulty()
 
         if IsEncounterLogEnabled() then
             toggle = true
-        elseif (instance_type == InstanceType.Dungeon and EzStalking.settings.log.dungeons) then
+        elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and not EzStalking.settings.log.veteran_only then
             toggle = true
-        elseif (instance_type == InstanceType.Arena and EzStalking.settings.log.arenas)
-            or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials)
-        then
-            toggle = true
-
-            EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
+        elseif instance_difficulty == DUNGEON_DIFFICULTY_VETERAN
+            and ((instance_type == InstanceType.Dungeon and EzStalking.settings.log.dungeons)
+                or (instance_type == InstanceType.Arena and EzStalking.settings.log.arenas)
+                or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials))
+            then
+                toggle = true
+                --EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
         end
     elseif (zone_type == ZoneType.Battleground and EzStalking.settings.log.battlegrounds)
         or (zone_type == ZoneType.ImperialCity and EzStalking.settings.log.imperial_city)
@@ -127,7 +130,7 @@ local function on_player_activated()
         toggle = true
     end
 
-    if libDialog and (EzStalking.settings.log.use_dialog or not EzStalking.settings.log.veteran_only) then
+    if libDialog and (EzStalking.settings.log.use_dialog or (not EzStalking.settings.log.veteran_only and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL)) then
         if toggle then
             if EzStalking.previous_decision == nil or EzStalking.remembered_zone ~= current_zone() then
                 EzStalking.toggle_logging(false)
