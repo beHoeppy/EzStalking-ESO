@@ -29,6 +29,8 @@ EzStalking.defaults = {
         remember_zone = false,
     },
 
+    zone_id = { },
+
     indicator = {
         enabled = false,
         locked = true,
@@ -43,7 +45,11 @@ EzStalking.defaults = {
 }
 
 local ZoneType = { Overland = 0, Instance = 1, Cyrodiil = 2, ImperialCity = 3, Battleground = 4, House = 5 }
-local InstanceType = { None = 0, Trial = 1, Arena = 2, Dungeon = 3 }
+local InstanceType = { Uncategorized = 0, Trial = 1, Arena = 2, Dungeon = 3 }
+
+EzStalking.defaults.zone_id[InstanceType.Trial] = { }
+EzStalking.defaults.zone_id[InstanceType.Arena] = { }
+EzStalking.defaults.zone_id[InstanceType.Dungeon] = { }
 
 local function current_zone()
     return GetZoneId(GetUnitZoneIndex("player"))
@@ -68,18 +74,32 @@ local function determine_zone_type()
 end
 
 local function determine_instance_type()
-    local revive_counter = GetCurrentRaidStartingReviveCounters()
-    revive_counter = revive_counter == nil and 0 or revive_counter
+    local instance_type = InstanceType.Uncategorized
+    local zone = current_zone()
 
-    local raid_id = GetCurrentParticipatingRaidId()
-    local instance_type = InstanceType.None
-
-    if (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
-        instance_type = InstanceType.Trial
-    elseif revive_counter <= 24 and raid_id >= 4 then
-        instance_type = InstanceType.Arena
-    elseif revive_counter == 0 and raid_id == 0 then
+    if EzStalking.settings.zone_id[InstanceType.Dungeon][zone] then
         instance_type = InstanceType.Dungeon
+    elseif EzStalking.settings.zone_id[InstanceType.Arena][zone] then
+        instance_type = InstanceType.Arena
+    elseif EzStalking.settings.zone_id[InstanceType.Trial][zone] then
+        instance_type = InstanceType.Trial
+    elseif GetCurrentZoneDungeonDifficulty() == DUNGEON_DIFFICULTY_VETERAN then
+        local revive_counter = GetCurrentRaidStartingReviveCounters()
+        revive_counter = revive_counter == nil and 0 or revive_counter
+
+        local raid_id = GetCurrentParticipatingRaidId()
+
+        if (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
+            instance_type = InstanceType.Trial
+        elseif revive_counter <= 24 and raid_id >= 4 then
+            instance_type = InstanceType.Arena
+        elseif revive_counter == 0 and raid_id == 0 then
+            instance_type = InstanceType.Dungeon
+        end
+
+        if instance_type ~= InstanceType.Uncategorized then
+            EzStalking.settings.zone_id[instance_type][zone] = true
+        end
     end
 
     return instance_type
@@ -114,13 +134,19 @@ local function on_player_activated()
             toggle = true
         elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and not EzStalking.settings.log.veteran_only then
             toggle = true
+            if (instance_type == InstanceType.Dungeon and not EzStalking.settings.log.dungeons)
+                or (instance_type == InstanceType.Arena and not EzStalking.settings.log.arenas)
+                or (instance_type == InstanceType.Trial and not EzStalking.settings.log.trials)
+            then
+                toggle = false
+            end
         elseif instance_difficulty == DUNGEON_DIFFICULTY_VETERAN
             and ((instance_type == InstanceType.Dungeon and EzStalking.settings.log.dungeons)
                 or (instance_type == InstanceType.Arena and EzStalking.settings.log.arenas)
                 or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials))
-            then
-                toggle = true
-                --EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
+        then
+            toggle = true
+            --EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
         end
     elseif (zone_type == ZoneType.Battleground and EzStalking.settings.log.battlegrounds)
         or (zone_type == ZoneType.ImperialCity and EzStalking.settings.log.imperial_city)
