@@ -107,7 +107,9 @@ end
 
 EzStalking.remembered_zone = nil
 EzStalking.previous_decision = nil
+EzStalking.automatic_toggle = nil
 local function on_player_activated()
+    EzStalking.automatic_toggle = true
     local toggle = false
     local instance_difficulty = nil
 
@@ -249,7 +251,13 @@ function EzStalking:initialize()
                     CHAT_SYSTEM:AddMessage(L.message.indicator.warn_unlocked)
                 end
             end
-        return false
+
+            if EzStalking.remembered_zone == current_zone() and not EzStalking.automatic_toggle and not (EzStalking.previous_decision == nil) then
+                EzStalking.previous_decision = not EzStalking.previous_decision
+            end
+
+            EzStalking.automatic_toggle = false
+            return false
       end)
 
     initialize_confirmation_dialog()
