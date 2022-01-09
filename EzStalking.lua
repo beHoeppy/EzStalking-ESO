@@ -105,20 +105,6 @@ local function determine_instance_type()
     return instance_type
 end
 
-local function on_raid_trial_started(event)
-    EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED)
-    local toggle = false
-
-    local instance_type = determine_instance_type()
-    if (instance_type == InstanceType.Arena and EzStalking.settings.log.arenas)
-        or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials)
-    then
-        toggle = true
-    end
-
-    EzStalking.toggle_logging(toggle)
-end
-
 EzStalking.remembered_zone = nil
 EzStalking.previous_decision = nil
 local function on_player_activated()
@@ -146,7 +132,6 @@ local function on_player_activated()
                 or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials))
         then
             toggle = true
-            --EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_RAID_TRIAL_STARTED, on_raid_trial_started)
         end
     elseif (zone_type == ZoneType.Battleground and EzStalking.settings.log.battlegrounds)
         or (zone_type == ZoneType.ImperialCity and EzStalking.settings.log.imperial_city)
@@ -178,8 +163,11 @@ local function on_player_activated()
     end
 end
 
+EzStalking_print_previous_decision = function()
+    d(EzStalking.previous_decision)
+end
+
 function EzStalking.toggle_logging(value)
-    -- when value is true and logging was already enabled, it remains enabled.
     local toggle = (value == nil) and not IsEncounterLogEnabled() or value
     SetEncounterLogEnabled(toggle)
 end
