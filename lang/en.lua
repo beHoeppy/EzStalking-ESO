@@ -15,8 +15,8 @@ L.menu.accountwide_tooltip              = "Share settings across all characters.
 L.menu.logging_enabled                  = "Automatic logging"
 L.menu.logging_enabled_tooltip          = "Enable automatic encounter logging"
 
-L.menu.veteran_only                     = "Log normal runs (w/ confirmation)"
-L.menu.veteran_only_tooltip             = "Asks you on every normal instance you join if you want to log the run."
+L.menu.normal_difficulty                     = "Log normal runs (w/ confirmation)"
+L.menu.normal_difficulty_tooltip             = "Asks you on every normal instance you join if you want to log the run."
 
 L.menu.use_dialog                       = "Confirmation dialog"
 L.menu.use_dialog_tooltip               = "Asks if you want to log a run instead of automatically logging."

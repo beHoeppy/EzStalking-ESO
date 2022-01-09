@@ -8,7 +8,7 @@ EzStalking.name         = 'EzStalking'
 EzStalking.title        = 'Easy Stalking'
 EzStalking.slash        = '/ezlog'
 EzStalking.author       = 'muh'
-EzStalking.version      = '1.4.4'
+EzStalking.version      = '1.4.5'
 EzStalking.var_version  = 2
 
 EzStalking.defaults = {
@@ -24,7 +24,7 @@ EzStalking.defaults = {
         arenas = false,
         dungeons = false,
         trials = false,
-        veteran_only = true,
+        normal_difficulty = false,
         use_dialog = false,
         remember_zone = false,
     },
@@ -132,7 +132,7 @@ local function on_player_activated()
 
         if IsEncounterLogEnabled() then
             toggle = true
-        elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and not EzStalking.settings.log.veteran_only then
+        elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and EzStalking.settings.log.normal_difficulty then
             toggle = true
             if (instance_type == InstanceType.Dungeon and not EzStalking.settings.log.dungeons)
                 or (instance_type == InstanceType.Arena and not EzStalking.settings.log.arenas)
@@ -156,7 +156,7 @@ local function on_player_activated()
         toggle = true
     end
 
-    if libDialog and (EzStalking.settings.log.use_dialog or (not EzStalking.settings.log.veteran_only and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL)) then
+    if libDialog and (EzStalking.settings.log.use_dialog or (EzStalking.settings.log.normal_difficulty and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL)) then
         if toggle then
             if EzStalking.previous_decision == nil or EzStalking.remembered_zone ~= current_zone() then
                 EzStalking.toggle_logging(false)

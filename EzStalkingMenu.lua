@@ -71,13 +71,13 @@ function EzStalking.Menu:initialize()
         {
             type = "checkbox",
             width = "half",
-            name = L.menu.veteran_only,
-            tooltip = L.menu.veteran_only_tooltip,
-            getFunc = function() return (not EzStalking.settings.log.veteran_only) end,
-            setFunc = function(value) EzStalking.settings.log.veteran_only = not value end,
+            name = L.menu.normal_difficulty,
+            tooltip = L.menu.normal_difficulty_tooltip,
+            getFunc = function() return EzStalking.settings.log.normal_difficulty end,
+            setFunc = function(value) EzStalking.settings.log.normal_difficulty = value end,
             disabled = function() return not EzStalking.settings.log.enabled end,
             requiresReload = false,
-            default = not EzStalking.defaults.log.veteran_only,
+            default = EzStalking.defaults.log.normal_difficulty,
         }
     end
     if libDialog then

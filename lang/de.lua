@@ -15,8 +15,8 @@ L.menu.accountwide_tooltip              = "Nutzt die gleichen Einstellungen für
 L.menu.logging_enabled                  = "Automatisches aufzeichnen"
 L.menu.logging_enabled_tooltip          = "Aktiviere automatisches aufzeichnen."
 
-L.menu.veteran_only                     = "Normale Instanzen Aufzeichnen (Bestätigungsdialog)"
-L.menu.veteran_only_tooltip             = "Fragt beim betreten jeder normalen Instanz ob aufgezeichnet werden soll."
+L.menu.normal_difficulty                     = "Normale Instanzen Aufzeichnen (Bestätigungsdialog)"
+L.menu.normal_difficulty_tooltip             = "Fragt beim betreten jeder normalen Instanz ob aufgezeichnet werden soll."
 
 L.menu.use_dialog                       = "Bestätigungsdialog"
 L.menu.use_dialog_tooltip               = "Fragt ob du eine Instanz Aufzeichnen willst anstatt automatisch aufzuzeichnen."
