@@ -62,7 +62,7 @@ local function determine_zone_type()
         zone_type = ZoneType.Instance
     elseif GetCurrentHouseOwner() ~= "" then
         zone_type = ZoneType.House
-    elseif GetCurrentBattlegroundId() > 0 then
+    elseif IsActiveWorldBattleground() then
         zone_type = ZoneType.Battleground
     elseif IsInImperialCity() then
         zone_type = ZoneType.ImperialCity
