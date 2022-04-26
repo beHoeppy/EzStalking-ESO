@@ -48,9 +48,10 @@ EzStalking.defaults = {
 local ZoneType = { Overland = 0, Instance = 1, Cyrodiil = 2, ImperialCity = 3, Battleground = 4, House = 5 }
 local InstanceType = { Uncategorized = 0, Trial = 1, Arena = 2, Dungeon = 3 }
 
-EzStalking.defaults.zone_id[InstanceType.Trial] = { }
-EzStalking.defaults.zone_id[InstanceType.Arena] = { }
-EzStalking.defaults.zone_id[InstanceType.Dungeon] = { }
+EzStalking.zone_id = EzStalking.defaults.zone_id
+EzStalking.zone_id[InstanceType.Trial] = { }
+EzStalking.zone_id[InstanceType.Arena] = { }
+EzStalking.zone_id[InstanceType.Dungeon] = { }
 
 local function current_zone()
     return GetZoneId(GetUnitZoneIndex("player"))
@@ -78,11 +79,11 @@ local function determine_instance_type()
     local instance_type = InstanceType.Uncategorized
     local zone = current_zone()
 
-    if EzStalking.settings.zone_id[InstanceType.Dungeon][zone] then
+    if EzStalking.zone_id[InstanceType.Dungeon][zone] then
         instance_type = InstanceType.Dungeon
-    elseif EzStalking.settings.zone_id[InstanceType.Arena][zone] then
+    elseif EzStalking.zone_id[InstanceType.Arena][zone] then
         instance_type = InstanceType.Arena
-    elseif EzStalking.settings.zone_id[InstanceType.Trial][zone] then
+    elseif EzStalking.zone_id[InstanceType.Trial][zone] then
         instance_type = InstanceType.Trial
     elseif GetCurrentZoneDungeonDifficulty() == DUNGEON_DIFFICULTY_VETERAN then
         local revive_counter = GetCurrentRaidStartingReviveCounters()
@@ -99,7 +100,7 @@ local function determine_instance_type()
         end
 
         if instance_type ~= InstanceType.Uncategorized then
-            EzStalking.settings.zone_id[instance_type][zone] = true
+            EzStalking.zone_id[instance_type][zone] = true
         end
     end
 
@@ -289,7 +290,10 @@ local function on_addon_loaded(event, name)
 
     local var_file = "EzStalking_SavedVars"
     EzStalking.settings = ZO_SavedVars:NewAccountWide(var_file, EzStalking.var_version, nil, EzStalking.defaults)
-    if not EzStalking.settings.account_wide then EzStalking.settings = ZO_SavedVars:NewCharacterIdSettings(var_file, EzStalking.var_version, nil, EzStalking.defaults) end
+    EzStalking.zone_id = EzStalking.settings.zone_id
+    if not EzStalking.settings.account_wide then
+        EzStalking.settings = ZO_SavedVars:NewCharacterIdSettings(var_file, EzStalking.var_version, nil, EzStalking.defaults)
+    end
 
     EzStalking:initialize()
 end
