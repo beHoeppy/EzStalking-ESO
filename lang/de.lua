@@ -15,8 +15,8 @@ L.menu.accountwide_tooltip              = "Nutzt die gleichen Einstellungen für
 L.menu.logging_enabled                  = "Automatisches aufzeichnen"
 L.menu.logging_enabled_tooltip          = "Aktiviere automatisches aufzeichnen."
 
-L.menu.normal_difficulty                     = "Normale Instanzen Aufzeichnen (Bestätigungsdialog)"
-L.menu.normal_difficulty_tooltip             = "Fragt beim betreten jeder normalen Instanz ob aufgezeichnet werden soll."
+L.menu.normal_difficulty                = "Normale Instanzen Aufzeichnen (Bestätigungsdialog)"
+L.menu.normal_difficulty_tooltip        = "Fragt beim betreten jeder normalen Instanz ob aufgezeichnet werden soll."
 
 L.menu.use_dialog                       = "Bestätigungsdialog"
 L.menu.use_dialog_tooltip               = "Fragt ob du eine Instanz Aufzeichnen willst anstatt automatisch aufzuzeichnen."
@@ -80,6 +80,7 @@ L.slash_command.lock                    = "sperren"
 L.slash_command.unlock                  = "entsperren"
 L.slash_command.anonymous               = "anonym"
 L.slash_command.named                   = "namentlich"
+L.slash_command.combat_only             = "imkampf"
 
 -- [[ Messages ]]
 L.message = { }
@@ -104,9 +105,11 @@ local substring_named                   = "du erscheinst mit deinem Charakternam
 local substring_note                    = "ACHTUNG: Bereits laufende Begegnungslogs werden verwenden die Anonymitätseinstellung die beim Start des Logs gewählt war"
 local substring_empty                   = "nichts"
 local substring_toggle                  = "de-/aktiviere Begegnungslogs."
+local substring_combat_only             = "es wird nur aufgezeichnet wenn du im Kampf bist."
 
 L.message.slash_command = { }           -- [[ Slash Command Messages]]
 L.message.slash_command.options         = "Optionen sind:"
+L.message.slash_command.combat_only_info= "Im Kampf Modus ist: "
 --[[
         Do not edit the following lines!
         They will be properly translated if you have translated everything above.
@@ -115,6 +118,7 @@ L.message.slash_command.lock            = "|cab7337" .. L.slash_command.lock .. 
 L.message.slash_command.unlock          = "|cab7337" .. L.slash_command.unlock .. "|r - " .. substring_unlock
 L.message.slash_command.anonymous       = "|cab7337" .. L.slash_command.anonymous .. "|r " .. substring_or .. " |cab7337" .. zo_strsub(L.slash_command.anonymous, 1, 1) .. "|r - " .. substring_anonymous
 L.message.slash_command.named           = "|cab7337" .. L.slash_command.named .. "|r " .. substring_or .. " |cab7337" .. zo_strsub(L.slash_command.named, 1, 1) .. "|r - " .. substring_named
+L.message.slash_command.combat_only     = "|cab7337" .. L.slash_command.combat_only .. "|r " .. substring_combat_only
 L.message.slash_command.note            = "|cff3737" .. substring_note .. "|r"
 L.message.slash_command.toggle          = "|cab7337<" .. substring_empty .. ">|r - " .. substring_toggle
 -- [[ continue editing below ]]

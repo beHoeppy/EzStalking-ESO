@@ -25,6 +25,7 @@ EzStalking.defaults = {
         dungeons = false,
         trials = false,
         normal_difficulty = false,
+        combat_only = false,
         use_dialog = false,
         remember_zone = false,
     },
@@ -165,13 +166,18 @@ local function on_player_activated()
     end
 end
 
-EzStalking_print_previous_decision = function()
-    d(EzStalking.previous_decision)
+local function on_player_combat_state(_, in_combat)
+    EzStalking.automatic_toggle = true
+    SetEncounterLogEnabled(in_combat)
 end
 
 function EzStalking.toggle_logging(value)
     local toggle = (value == nil) and not IsEncounterLogEnabled() or value
-    SetEncounterLogEnabled(toggle)
+    if EzStalking.settings.log.combat_only then
+        EzStalking.combat_only_mode(value)
+    else
+        SetEncounterLogEnabled(toggle)
+    end
 end
 EzStalking_keybind_toggle = EzStalking.toggle_logging
 
@@ -214,6 +220,9 @@ function EzStalking.slash_command(arg)
             EzStalking.UI.lock(false)
     elseif (arg == L.slash_command.lock) and EzStalking.settings.indicator.enabled then
             EzStalking.UI.lock(true)
+    elseif (arg == L.slash_command.combat_only) then
+        EzStalking.settings.log.combat_only = not EzStalking.settings.log.combat_only
+        CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only_info .. (EzStalking.settings.log.combat_only and "true" or "false"))
     else
         CHAT_SYSTEM:AddMessage(L.message.slash_command.options)
         CHAT_SYSTEM:AddMessage(L.message.slash_command.toggle)
@@ -221,6 +230,7 @@ function EzStalking.slash_command(arg)
             CHAT_SYSTEM:AddMessage(L.message.slash_command.lock)
             CHAT_SYSTEM:AddMessage(L.message.slash_command.unlock)
         end
+        CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only)
         CHAT_SYSTEM:AddMessage(L.message.slash_command.anonymous)
         CHAT_SYSTEM:AddMessage(L.message.slash_command.named)
         CHAT_SYSTEM:AddMessage(L.message.slash_command.note)
@@ -235,6 +245,14 @@ function EzStalking.enable_automatic_logging(value)
         EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
     else
         EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_PLAYER_ACTIVATED)
+    end
+end
+
+function EzStalking.combat_only_mode(value)
+    if value then
+        EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_PLAYER_COMBAT_STATE, on_player_combat_state)
+    else
+        EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_PLAYER_COMBAT_STATE)
     end
 end
 
