@@ -48,10 +48,10 @@ EzStalking.defaults = {
 local ZoneType = { Overland = 0, Instance = 1, Cyrodiil = 2, ImperialCity = 3, Battleground = 4, House = 5 }
 local InstanceType = { Uncategorized = 0, Trial = 1, Arena = 2, Dungeon = 3 }
 
+EzStalking.defaults.zone_id[InstanceType.Trial] = { }
+EzStalking.defaults.zone_id[InstanceType.Arena] = { }
+EzStalking.defaults.zone_id[InstanceType.Dungeon] = { }
 EzStalking.zone_id = EzStalking.defaults.zone_id
-EzStalking.zone_id[InstanceType.Trial] = { }
-EzStalking.zone_id[InstanceType.Arena] = { }
-EzStalking.zone_id[InstanceType.Dungeon] = { }
 
 local function current_zone()
     return GetZoneId(GetUnitZoneIndex("player"))
@@ -86,22 +86,20 @@ local function determine_instance_type()
     elseif EzStalking.zone_id[InstanceType.Trial][zone] then
         instance_type = InstanceType.Trial
     elseif GetCurrentZoneDungeonDifficulty() == DUNGEON_DIFFICULTY_VETERAN then
-        local revive_counter = GetCurrentRaidStartingReviveCounters()
-        revive_counter = revive_counter == nil and 0 or revive_counter
+        instance_type = InstanceType.Dungeon
 
-        local raid_id = GetCurrentParticipatingRaidId()
+        if IsPlayerInReviveCounterRaid() then
+            local revive_counter = GetCurrentRaidStartingReviveCounters()
+            local raid_id = GetCurrentParticipatingRaidId()
 
-        if (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
-            instance_type = InstanceType.Trial
-        elseif revive_counter <= 24 and raid_id >= 4 then
-            instance_type = InstanceType.Arena
-        elseif revive_counter == 0 and raid_id == 0 then
-            instance_type = InstanceType.Dungeon
+            if (revive_counter > 24 or raid_id < 4) and raid_id > 0 then
+                instance_type = InstanceType.Trial
+            elseif revive_counter <= 24 and raid_id >= 4 then
+                instance_type = InstanceType.Arena
+            end
         end
 
-        if instance_type ~= InstanceType.Uncategorized then
-            EzStalking.zone_id[instance_type][zone] = true
-        end
+        EzStalking.zone_id[instance_type][zone] = true
     end
 
     return instance_type
@@ -110,7 +108,7 @@ end
 EzStalking.remembered_zone = nil
 EzStalking.previous_decision = nil
 EzStalking.automatic_toggle = nil
-local function on_player_activated()
+local function determine_encounterlog_status()
     EzStalking.automatic_toggle = true
     local toggle = false
     local instance_difficulty = nil
@@ -151,7 +149,7 @@ local function on_player_activated()
                 EzStalking.toggle_logging(false)
                 zo_callLater(function()
                     libDialog:ShowDialog(EzStalking.name, EzStalking.name .. "LoggingConfirmationDialog")
-                end, 3000)
+                end, 2000)
             elseif EzStalking.remembered_zone == current_zone() then
                 EzStalking.toggle_logging(EzStalking.previous_decision)
             end
@@ -165,6 +163,12 @@ local function on_player_activated()
     else
         EzStalking.toggle_logging(toggle)
     end
+end
+
+local function on_player_activated()
+    zo_callLater(function()
+        determine_encounterlog_status()
+    end, 1000)
 end
 
 local function on_player_combat_state(_, in_combat)
@@ -284,7 +288,7 @@ function EzStalking:initialize()
     EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
 end
 
-local function on_addon_loaded(event, name)
+local function on_addon_loaded(_, name)
     if name ~= EzStalking.name then return end
     EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_ADD_ON_LOADED)
 
