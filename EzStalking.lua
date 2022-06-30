@@ -1,17 +1,17 @@
 if EzStalking == nil then EzStalking = { } end
-local EzStalking = _G['EzStalking']
-local L = EzStalking:GetLocale()
+local Ez = _G['EzStalking']
+local L = Ez:GetLocale()
 
 local libDialog = LibDialog
 
-EzStalking.name         = 'EzStalking'
-EzStalking.title        = 'Easy Stalking'
-EzStalking.slash        = '/ezlog'
-EzStalking.author       = 'muh'
-EzStalking.version      = '1.4.5'
-EzStalking.var_version  = 2
+Ez.name         = 'EzStalking'
+Ez.title        = 'Easy Stalking'
+Ez.slash        = '/ezlog'
+Ez.author       = 'muh'
+Ez.version      = '1.4.5'
+Ez.var_version  = 2
 
-EzStalking.defaults = {
+Ez.defaults = {
     account_wide = false,
     upload_reminder = false,
 
@@ -48,10 +48,10 @@ EzStalking.defaults = {
 local ZoneType = { Overland = 0, Instance = 1, Cyrodiil = 2, ImperialCity = 3, Battleground = 4, House = 5 }
 local InstanceType = { Uncategorized = 0, Trial = 1, Arena = 2, Dungeon = 3 }
 
-EzStalking.defaults.zone_id[InstanceType.Trial] = { }
-EzStalking.defaults.zone_id[InstanceType.Arena] = { }
-EzStalking.defaults.zone_id[InstanceType.Dungeon] = { }
-EzStalking.zone_id = EzStalking.defaults.zone_id
+Ez.defaults.zone_id[InstanceType.Trial] = { }
+Ez.defaults.zone_id[InstanceType.Arena] = { }
+Ez.defaults.zone_id[InstanceType.Dungeon] = { }
+Ez.zone_id = Ez.defaults.zone_id
 
 local function current_zone()
     return GetZoneId(GetUnitZoneIndex("player"))
@@ -79,11 +79,11 @@ local function determine_instance_type()
     local instance_type = InstanceType.Uncategorized
     local zone = current_zone()
 
-    if EzStalking.zone_id[InstanceType.Dungeon][zone] then
+    if Ez.zone_id[InstanceType.Dungeon][zone] then
         instance_type = InstanceType.Dungeon
-    elseif EzStalking.zone_id[InstanceType.Arena][zone] then
+    elseif Ez.zone_id[InstanceType.Arena][zone] then
         instance_type = InstanceType.Arena
-    elseif EzStalking.zone_id[InstanceType.Trial][zone] then
+    elseif Ez.zone_id[InstanceType.Trial][zone] then
         instance_type = InstanceType.Trial
     elseif GetCurrentZoneDungeonDifficulty() == DUNGEON_DIFFICULTY_VETERAN then
         instance_type = InstanceType.Dungeon
@@ -99,17 +99,17 @@ local function determine_instance_type()
             end
         end
 
-        EzStalking.zone_id[instance_type][zone] = true
+        Ez.zone_id[instance_type][zone] = true
     end
 
     return instance_type
 end
 
-EzStalking.remembered_zone = nil
-EzStalking.previous_decision = nil
-EzStalking.automatic_toggle = nil
+Ez.remembered_zone = nil
+Ez.previous_decision = nil
+Ez.automatic_toggle = nil
 local function determine_encounterlog_status()
-    EzStalking.automatic_toggle = true
+    Ez.automatic_toggle = true
     local toggle = false
     local instance_difficulty = nil
 
@@ -120,48 +120,48 @@ local function determine_encounterlog_status()
 
         if IsEncounterLogEnabled() then
             toggle = true
-        elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and EzStalking.settings.log.normal_difficulty then
+        elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and Ez.settings.log.normal_difficulty then
             toggle = true
-            if (instance_type == InstanceType.Dungeon and not EzStalking.settings.log.dungeons)
-                or (instance_type == InstanceType.Arena and not EzStalking.settings.log.arenas)
-                or (instance_type == InstanceType.Trial and not EzStalking.settings.log.trials)
+            if (instance_type == InstanceType.Dungeon and not Ez.settings.log.dungeons)
+                or (instance_type == InstanceType.Arena and not Ez.settings.log.arenas)
+                or (instance_type == InstanceType.Trial and not Ez.settings.log.trials)
             then
                 toggle = false
             end
         elseif instance_difficulty == DUNGEON_DIFFICULTY_VETERAN
-            and ((instance_type == InstanceType.Dungeon and EzStalking.settings.log.dungeons)
-                or (instance_type == InstanceType.Arena and EzStalking.settings.log.arenas)
-                or (instance_type == InstanceType.Trial and EzStalking.settings.log.trials))
+            and ((instance_type == InstanceType.Dungeon and Ez.settings.log.dungeons)
+                or (instance_type == InstanceType.Arena and Ez.settings.log.arenas)
+                or (instance_type == InstanceType.Trial and Ez.settings.log.trials))
         then
             toggle = true
         end
-    elseif (zone_type == ZoneType.Battleground and EzStalking.settings.log.battlegrounds)
-        or (zone_type == ZoneType.ImperialCity and EzStalking.settings.log.imperial_city)
-        or (zone_type == ZoneType.Cyrodiil and EzStalking.settings.log.cyrodiil)
-        or (zone_type == ZoneType.House and EzStalking.settings.log.housing)
+    elseif (zone_type == ZoneType.Battleground and Ez.settings.log.battlegrounds)
+        or (zone_type == ZoneType.ImperialCity and Ez.settings.log.imperial_city)
+        or (zone_type == ZoneType.Cyrodiil and Ez.settings.log.cyrodiil)
+        or (zone_type == ZoneType.House and Ez.settings.log.housing)
     then
         toggle = true
     end
 
-    if libDialog and (EzStalking.settings.log.use_dialog or (EzStalking.settings.log.normal_difficulty and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL)) then
+    if libDialog and (Ez.settings.log.use_dialog or (Ez.settings.log.normal_difficulty and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL)) then
         if toggle then
-            if EzStalking.previous_decision == nil or EzStalking.remembered_zone ~= current_zone() then
-                EzStalking.toggle_logging(false)
+            if Ez.previous_decision == nil or Ez.remembered_zone ~= current_zone() then
+                Ez.toggle_logging(false)
                 zo_callLater(function()
-                    libDialog:ShowDialog(EzStalking.name, EzStalking.name .. "LoggingConfirmationDialog")
+                    libDialog:ShowDialog(Ez.name, Ez.name .. "LoggingConfirmationDialog")
                 end, 2000)
-            elseif EzStalking.remembered_zone == current_zone() then
-                EzStalking.toggle_logging(EzStalking.previous_decision)
+            elseif Ez.remembered_zone == current_zone() then
+                Ez.toggle_logging(Ez.previous_decision)
             end
-        elseif zone_type == ZoneType.Overland and not EzStalking.settings.log.remember_zone then
-            EzStalking.toggle_logging(false)
-            EzStalking.remembered_zone = nil
-            EzStalking.previous_decision = nil
+        elseif zone_type == ZoneType.Overland and not Ez.settings.log.remember_zone then
+            Ez.toggle_logging(false)
+            Ez.remembered_zone = nil
+            Ez.previous_decision = nil
         else
-            EzStalking.toggle_logging(false)
+            Ez.toggle_logging(false)
         end
     else
-        EzStalking.toggle_logging(toggle)
+        Ez.toggle_logging(toggle)
     end
 end
 
@@ -172,66 +172,66 @@ local function on_player_activated()
 end
 
 local function on_player_combat_state(_, in_combat)
-    EzStalking.automatic_toggle = true
+    Ez.automatic_toggle = true
     SetEncounterLogEnabled(in_combat)
 end
 
-function EzStalking.toggle_logging(value)
+function Ez.toggle_logging(value)
     local toggle = (value == nil) and not IsEncounterLogEnabled() or value
-    if EzStalking.settings.log.combat_only then
-        EzStalking.combat_only_mode(value)
+    if Ez.settings.log.combat_only then
+        Ez.combat_only_mode(value)
     else
         SetEncounterLogEnabled(toggle)
     end
 end
-EzStalking_keybind_toggle = EzStalking.toggle_logging
+EzStalking_keybind_toggle = Ez.toggle_logging
 
-function EzStalking.confirmation_dialog_callback(value)
-    EzStalking.previous_decision = value
-    EzStalking.remembered_zone = current_zone()
+function Ez.confirmation_dialog_callback(value)
+    Ez.previous_decision = value
+    Ez.remembered_zone = current_zone()
 end
 
 local function initialize_confirmation_dialog()
     if libDialog then
-        local dialog_name = EzStalking.name .. "LoggingConfirmationDialog"
-        libDialog:RegisterDialog(EzStalking.name, dialog_name,
+        local dialog_name = Ez.name .. "LoggingConfirmationDialog"
+        libDialog:RegisterDialog(Ez.name, dialog_name,
                                  L.dialog.logging.title, L.dialog.logging.text,
                                  function() -- callBackYes
-                                    EzStalking.toggle_logging(true)
-                                    EzStalking.confirmation_dialog_callback(true)
+                                    Ez.toggle_logging(true)
+                                    Ez.confirmation_dialog_callback(true)
                                  end,
                                  function() -- callBackNo
-                                    EzStalking.confirmation_dialog_callback(false)
+                                    Ez.confirmation_dialog_callback(false)
                                  end)
     end
 end
 
-function EzStalking.set_anonymity(value)
+function Ez.set_anonymity(value)
     value = value and "1" or "0"
     SetSetting(SETTING_TYPE_COMBAT, COMBAT_SETTING_ENCOUNTER_LOG_APPEAR_ANONYMOUS, value)
 end
 
-function EzStalking.slash_command(arg)
+function Ez.slash_command(arg)
     local notify_anonymity = nil
     if (arg == '') then
-        EzStalking.toggle_logging()
+        Ez.toggle_logging()
     elseif (arg == L.slash_command.anonymous --[['anonymous']]) or (arg == zo_strsub(L.slash_command.anonymous, 1, 1) --[['a']]) then
-        EzStalking.set_anonymity(true)
+        Ez.set_anonymity(true)
         notify_anonymity = L.message.anonymity.anonymous
     elseif (arg == L.slash_command.named --[['named']]) or (arg == zo_strsub(L.slash_command.named, 1, 1) --[['n']]) then
-        EzStalking.set_anonymity(false)
+        Ez.set_anonymity(false)
         notify_anonymity = L.message.anonymity.named
-    elseif (arg == L.slash_command.unlock) and EzStalking.settings.indicator.enabled then
-            EzStalking.UI.lock(false)
-    elseif (arg == L.slash_command.lock) and EzStalking.settings.indicator.enabled then
-            EzStalking.UI.lock(true)
+    elseif (arg == L.slash_command.unlock) and Ez.settings.indicator.enabled then
+            Ez.UI.lock(false)
+    elseif (arg == L.slash_command.lock) and Ez.settings.indicator.enabled then
+            Ez.UI.lock(true)
     elseif (arg == L.slash_command.combat_only) then
-        EzStalking.settings.log.combat_only = not EzStalking.settings.log.combat_only
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only_info .. (EzStalking.settings.log.combat_only and "true" or "false"))
+        Ez.settings.log.combat_only = not Ez.settings.log.combat_only
+        CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only_info .. (Ez.settings.log.combat_only and "true" or "false"))
     else
         CHAT_SYSTEM:AddMessage(L.message.slash_command.options)
         CHAT_SYSTEM:AddMessage(L.message.slash_command.toggle)
-        if EzStalking.settings.indicator.enabled then
+        if Ez.settings.indicator.enabled then
             CHAT_SYSTEM:AddMessage(L.message.slash_command.lock)
             CHAT_SYSTEM:AddMessage(L.message.slash_command.unlock)
         end
@@ -245,61 +245,61 @@ function EzStalking.slash_command(arg)
     end
 end
 
-function EzStalking.enable_automatic_logging(value)
+function Ez.enable_automatic_logging(value)
     if value then
-        EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
+        EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
     else
-        EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_PLAYER_ACTIVATED)
+        EVENT_MANAGER:UnregisterForEvent(Ez.name, EVENT_PLAYER_ACTIVATED)
     end
 end
 
-function EzStalking.combat_only_mode(value)
+function Ez.combat_only_mode(value)
     if value then
-        EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_PLAYER_COMBAT_STATE, on_player_combat_state)
+        EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_PLAYER_COMBAT_STATE, on_player_combat_state)
     else
-        EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_PLAYER_COMBAT_STATE)
+        EVENT_MANAGER:UnregisterForEvent(Ez.name, EVENT_PLAYER_COMBAT_STATE)
     end
 end
 
-function EzStalking:initialize()
-    EzStalking.UI:initialize()
-    EzStalking.Menu:initialize()
+function Ez:initialize()
+    Ez.UI:initialize()
+    Ez.Menu:initialize()
 
-    SLASH_COMMANDS[EzStalking.slash] = EzStalking.slash_command
+    SLASH_COMMANDS[Ez.slash] = Ez.slash_command
 
     ZO_PostHook("SetEncounterLogEnabled", function()
-            if EzStalking.settings.indicator.enabled then
-                EzStalking.UI.toggle_fg_color()
-                if not EzStalking.settings.indicator.locked then
+            if Ez.settings.indicator.enabled then
+                Ez.UI.toggle_fg_color()
+                if not Ez.settings.indicator.locked then
                     CHAT_SYSTEM:AddMessage(L.message.indicator.warn_unlocked)
                 end
             end
 
-            if EzStalking.remembered_zone == current_zone() and not EzStalking.automatic_toggle and not (EzStalking.previous_decision == nil) then
-                EzStalking.previous_decision = not EzStalking.previous_decision
+            if Ez.remembered_zone == current_zone() and not Ez.automatic_toggle and not (Ez.previous_decision == nil) then
+                Ez.previous_decision = not Ez.previous_decision
             end
 
-            EzStalking.automatic_toggle = false
+            Ez.automatic_toggle = false
             return false
       end)
 
     initialize_confirmation_dialog()
 
-    EzStalking.enable_automatic_logging(EzStalking.settings.log.enabled)
+    Ez.enable_automatic_logging(Ez.settings.log.enabled)
 end
 
 local function on_addon_loaded(_, name)
-    if name ~= EzStalking.name then return end
-    EVENT_MANAGER:UnregisterForEvent(EzStalking.name, EVENT_ADD_ON_LOADED)
+    if name ~= Ez.name then return end
+    EVENT_MANAGER:UnregisterForEvent(Ez.name, EVENT_ADD_ON_LOADED)
 
     local var_file = "EzStalking_SavedVars"
-    EzStalking.settings = ZO_SavedVars:NewAccountWide(var_file, EzStalking.var_version, nil, EzStalking.defaults)
-    EzStalking.zone_id = EzStalking.settings.zone_id
-    if not EzStalking.settings.account_wide then
-        EzStalking.settings = ZO_SavedVars:NewCharacterIdSettings(var_file, EzStalking.var_version, nil, EzStalking.defaults)
+    Ez.settings = ZO_SavedVars:NewAccountWide(var_file, Ez.var_version, nil, Ez.defaults)
+    Ez.zone_id = Ez.settings.zone_id
+    if not Ez.settings.account_wide then
+        Ez.settings = ZO_SavedVars:NewCharacterIdSettings(var_file, Ez.var_version, nil, Ez.defaults)
     end
 
-    EzStalking:initialize()
+    Ez:initialize()
 end
 
-EVENT_MANAGER:RegisterForEvent(EzStalking.name, EVENT_ADD_ON_LOADED, on_addon_loaded)
+EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_ADD_ON_LOADED, on_addon_loaded)
