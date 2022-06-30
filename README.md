@@ -33,6 +33,6 @@ Automatic logging is disabled by default, please go to the Easy Stalking setting
 
 -------
 
-Dependencies
+## Dependencies
 * LibAddonMenu ( [ESOUI](https://www.esoui.com/downloads/info7-LibAddonMenu.html) | [github](https://github.com/sirinsidiator/ESO-LibAddonMenu) )
 * Optional: LibDialog ( [ESOUI](https://www.esoui.com/downloads/info1931-LibDialog-Customconfirmationdialogwith2buttons.html) )
