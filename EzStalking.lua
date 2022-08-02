@@ -165,22 +165,11 @@ local function determine_encounterlog_status()
     end
 end
 
-local function on_player_activated()
-    zo_callLater(function()
-        determine_encounterlog_status()
-    end, 1000)
-end
-
-local function on_player_combat_state(_, in_combat)
-    Ez.automatic_toggle = true
-    SetEncounterLogEnabled(in_combat)
-end
-
 function Ez.toggle_logging(value)
-    local toggle = (value == nil) and not IsEncounterLogEnabled() or value
     if Ez.settings.log.combat_only then
         Ez.combat_only_mode(value)
     else
+        local toggle = (value == nil) and not IsEncounterLogEnabled() or value
         SetEncounterLogEnabled(toggle)
     end
 end
@@ -211,6 +200,19 @@ function Ez.set_anonymity(value)
     SetSetting(SETTING_TYPE_COMBAT, COMBAT_SETTING_ENCOUNTER_LOG_APPEAR_ANONYMOUS, value)
 end
 
+local function print_help()
+    CHAT_SYSTEM:AddMessage(L.message.slash_command.options)
+    CHAT_SYSTEM:AddMessage(L.message.slash_command.toggle)
+    if Ez.settings.indicator.enabled then
+        CHAT_SYSTEM:AddMessage(L.message.slash_command.lock)
+        CHAT_SYSTEM:AddMessage(L.message.slash_command.unlock)
+    end
+    CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only)
+    CHAT_SYSTEM:AddMessage(L.message.slash_command.anonymous)
+    CHAT_SYSTEM:AddMessage(L.message.slash_command.named)
+    CHAT_SYSTEM:AddMessage(L.message.slash_command.note)
+end
+
 function Ez.slash_command(arg)
     local notify_anonymity = nil
     if (arg == '') then
@@ -229,16 +231,7 @@ function Ez.slash_command(arg)
         Ez.settings.log.combat_only = not Ez.settings.log.combat_only
         CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only_info .. (Ez.settings.log.combat_only and "true" or "false"))
     else
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.options)
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.toggle)
-        if Ez.settings.indicator.enabled then
-            CHAT_SYSTEM:AddMessage(L.message.slash_command.lock)
-            CHAT_SYSTEM:AddMessage(L.message.slash_command.unlock)
-        end
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.combat_only)
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.anonymous)
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.named)
-        CHAT_SYSTEM:AddMessage(L.message.slash_command.note)
+        print_help()
     end
     if notify_anonymity ~= nil then
         CHAT_SYSTEM:AddMessage(L.message.anonymity.preamble .. " |cffffff" .. notify_anonymity .. "|r")
@@ -247,7 +240,11 @@ end
 
 function Ez.enable_automatic_logging(value)
     if value then
-        EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_PLAYER_ACTIVATED, on_player_activated)
+        EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_PLAYER_ACTIVATED, function()
+            zo_callLater(function()
+                determine_encounterlog_status()
+            end, 1000)
+        end)
     else
         EVENT_MANAGER:UnregisterForEvent(Ez.name, EVENT_PLAYER_ACTIVATED)
     end
@@ -255,7 +252,10 @@ end
 
 function Ez.combat_only_mode(value)
     if value then
-        EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_PLAYER_COMBAT_STATE, on_player_combat_state)
+        EVENT_MANAGER:RegisterForEvent(Ez.name, EVENT_PLAYER_COMBAT_STATE, function(_, in_combat)
+            Ez.automatic_toggle = true
+            SetEncounterLogEnabled(in_combat)
+        end)
     else
         EVENT_MANAGER:UnregisterForEvent(Ez.name, EVENT_PLAYER_COMBAT_STATE)
     end
