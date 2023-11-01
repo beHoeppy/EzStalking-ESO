@@ -174,13 +174,13 @@ function Ez.Menu:initialize()
     {
         type = "checkbox",
         width = "half",
-        name =  L.menu.location.arenas,
-        tooltip = L.menu.location.arenas_tooltip,
-        getFunc = function() return Ez.settings.log.arenas end,
-        setFunc = function(value) Ez.settings.log.arenas = value end,
+        name = L.menu.location.endless,
+        tooltip = L.menu.location.endless_tooltip,
+        getFunc = function() return Ez.settings.log.endless end,
+        setFunc = function(value) Ez.settings.log.endless = value end,
         disabled = function() return not Ez.settings.log.enabled end,
         requiresReload = false,
-        default = Ez.defaults.log.arenas,
+        default = Ez.defaults.log.endless,
     }
     options_table[#options_table+1] =
     {
@@ -198,13 +198,13 @@ function Ez.Menu:initialize()
     {
         type = "checkbox",
         width = "half",
-        name = L.menu.location.trials,
-        tooltip = L.menu.location.trials_tooltip,
-        getFunc = function() return Ez.settings.log.trials end,
-        setFunc = function(value) Ez.settings.log.trials = value end,
+        name =  L.menu.location.arenas,
+        tooltip = L.menu.location.arenas_tooltip,
+        getFunc = function() return Ez.settings.log.arenas end,
+        setFunc = function(value) Ez.settings.log.arenas = value end,
         disabled = function() return not Ez.settings.log.enabled end,
         requiresReload = false,
-        default = Ez.defaults.log.trials,
+        default = Ez.defaults.log.arenas,
     }
     options_table[#options_table+1] =
     {
@@ -222,6 +222,23 @@ function Ez.Menu:initialize()
     {
         type = "checkbox",
         width = "half",
+        name = L.menu.location.trials,
+        tooltip = L.menu.location.trials_tooltip,
+        getFunc = function() return Ez.settings.log.trials end,
+        setFunc = function(value) Ez.settings.log.trials = value end,
+        disabled = function() return not Ez.settings.log.enabled end,
+        requiresReload = false,
+        default = Ez.defaults.log.trials,
+    }
+    options_table[#options_table+1] =
+    {
+        type = "divider",
+        width = "half",
+    }
+    options_table[#options_table+1] =
+    {
+        type = "checkbox",
+        width = "half",
         name = L.menu.location.housing,
         tooltip = L.menu.location.housing_tooltip,
         getFunc = function() return Ez.settings.log.housing end,
@@ -229,11 +246,6 @@ function Ez.Menu:initialize()
         disabled = function() return not Ez.settings.log.enabled end,
         requiresReload = false,
         default = Ez.defaults.log.housing,
-    }
-    options_table[#options_table+1] =
-    {
-        type = "divider",
-        width = "half",
     }
     options_table[#options_table+1] =
     {

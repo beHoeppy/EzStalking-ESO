@@ -23,6 +23,7 @@ Ez.defaults = {
         cyrodiil = false,
         arenas = false,
         dungeons = false,
+        endless = false,
         trials = false,
         normal_difficulty = false,
         combat_only = false,
@@ -46,11 +47,12 @@ Ez.defaults = {
 }
 
 local ZoneType = { Overland = 0, Instance = 1, Cyrodiil = 2, ImperialCity = 3, Battleground = 4, House = 5 }
-local InstanceType = { Uncategorized = 0, Trial = 1, Arena = 2, Dungeon = 3 }
+local InstanceType = { Uncategorized = 0, Trial = 1, Arena = 2, Dungeon = 3, Endless = 4}
 
 Ez.defaults.zone_id[InstanceType.Trial] = { }
 Ez.defaults.zone_id[InstanceType.Arena] = { }
 Ez.defaults.zone_id[InstanceType.Dungeon] = { }
+Ez.defaults.zone_id[InstanceType.Endless] = { }
 Ez.zone_id = Ez.defaults.zone_id
 
 local function current_zone()
@@ -79,7 +81,9 @@ local function determine_instance_type()
     local instance_type = InstanceType.Uncategorized
     local zone = current_zone()
 
-    if Ez.zone_id[InstanceType.Dungeon][zone] then
+    if IsInstanceEndlessDungeon() then
+        instance_type = InstanceType.Endless
+    elseif Ez.zone_id[InstanceType.Dungeon][zone] then
         instance_type = InstanceType.Dungeon
     elseif Ez.zone_id[InstanceType.Arena][zone] then
         instance_type = InstanceType.Arena
@@ -120,8 +124,11 @@ local function determine_encounterlog_status()
 
         if IsEncounterLogEnabled() then
             toggle = true
+        elseif instance_type == InstanceType.Endless and Ez.settings.log.endless then
+            toggle = true
         elseif instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and Ez.settings.log.normal_difficulty then
             toggle = true
+            -- disable logging if it is known that it is an InstanceType that should not be logged.
             if (instance_type == InstanceType.Dungeon and not Ez.settings.log.dungeons)
                 or (instance_type == InstanceType.Arena and not Ez.settings.log.arenas)
                 or (instance_type == InstanceType.Trial and not Ez.settings.log.trials)
@@ -143,7 +150,7 @@ local function determine_encounterlog_status()
         toggle = true
     end
 
-    if libDialog and (Ez.settings.log.use_dialog or (Ez.settings.log.normal_difficulty and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL)) then
+    if libDialog and (Ez.settings.log.use_dialog or (Ez.settings.log.normal_difficulty and instance_difficulty == DUNGEON_DIFFICULTY_NORMAL and not IsInstanceEndlessDungeon())) then
         if toggle then
             if Ez.previous_decision == nil or Ez.remembered_zone ~= current_zone() then
                 Ez.toggle_logging(false)

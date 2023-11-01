@@ -15,8 +15,8 @@ L.menu.accountwide_tooltip              = "Partager les paramètres entre tous l
 L.menu.logging_enabled                  = "enregistrement automatique"
 L.menu.logging_enabled_tooltip          = "Activer l'enregistrement automatique des rencontres"
 
-L.menu.normal_difficulty                     = "enreg diff normal (sans/confirmation)"
-L.menu.normal_difficulty_tooltip             = "Vous demande sur chaque instance normale que vous rejoignez si vous souhaitez l'enregistrer."
+L.menu.normal_difficulty                = "enreg diff normal (sans/confirmation)"
+L.menu.normal_difficulty_tooltip        = "Vous demande sur chaque instance normale que vous rejoignez si vous souhaitez l'enregistrer."
 
 L.menu.use_dialog                       = "Boîte de dialogue de confirmation"
 L.menu.use_dialog_tooltip               = "Vous demande si vous souhaitez enregistrer une instance au lieu de l'enregistrer automatiquement."
@@ -35,8 +35,12 @@ L.menu.location.arenas_tooltip          = "Activer l'enregistrement automatique 
 L.menu.location.arenas                  = substring_arenas -- do not edit
 
 local substring_dungeons                = "Donjons"
-L.menu.location.dungeons_tooltip        ="Activer l'enregistrement automatique dans les donjons."
+L.menu.location.dungeons_tooltip        = "Activer l'enregistrement automatique dans les donjons."
 L.menu.location.dungeons                = substring_dungeons -- do not edit
+
+local substring_endless                 = "Infinie"
+L.menu.location.endless_tooltip         = "Activer l'enregistrement automatique dans les donjons sans fin."
+L.menu.location.endless                 = substring_endless -- do not edit
 
 local substring_trials                  = "Raid"
 L.menu.location.trials_tooltip          = "Activer l'enregistrement automatique des raids."

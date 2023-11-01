@@ -35,8 +35,12 @@ L.menu.location.arenas_tooltip          = "Enable automatic logging in solo and 
 L.menu.location.arenas                  = substring_arenas -- do not edit
 
 local substring_dungeons                = "Dungeons"
-L.menu.location.dungeons_tooltip        ="Enable automatic logging in dungeons."
+L.menu.location.dungeons_tooltip        = "Enable automatic logging in dungeons."
 L.menu.location.dungeons                = substring_dungeons -- do not edit
+
+local substring_endless                 = "Endless"
+L.menu.location.endless_tooltip         = "Enable automatic logging in endless dungeons."
+L.menu.location.endless                 = substring_endless -- do not edit
 
 local substring_trials                  = "Trials"
 L.menu.location.trials_tooltip          = "Enable automatic logging in trials."

@@ -35,8 +35,12 @@ L.menu.location.arenas_tooltip          = "Aktiviere automatisches aufzeichnen i
 L.menu.location.arenas                  = substring_arenas -- do not edit
 
 local substring_dungeons                = "Verliese"
-L.menu.location.dungeons_tooltip        ="Aktiviere automatisches aufzeichnen in Verliesen."
+L.menu.location.dungeons_tooltip        = "Aktiviere automatisches aufzeichnen in Verliesen."
 L.menu.location.dungeons                = substring_dungeons -- do not edit
+
+local substring_endless                 = "Endlos"
+L.menu.location.endless_tooltip         = "Aktiviere automatisches aufzeichnen in endlosen Verliesen."
+L.menu.location.endless                 = substring_endless -- do not edit
 
 local substring_trials                  = "Prüfungen"
 L.menu.location.trials_tooltip          = "Aktiviere automatisches aufzeichnen in Prüfungen."
