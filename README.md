@@ -12,6 +12,7 @@ This addon lets you configure content areas you want to automatically start logg
     * Housing
     * Arenas
     * Dungeons
+    * Endless Activities
     * Trials
     * Battlegrounds
     * Imperial City
