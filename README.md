@@ -32,8 +32,13 @@ This addon lets you configure content areas you want to automatically start logg
 
 Automatic logging is disabled by default, please go to the Easy Stalking settings page and enable content types you're interested in.
 
--------
+--------------
 
 ## Dependencies
 * LibAddonMenu ( [ESOUI](https://www.esoui.com/downloads/info7-LibAddonMenu.html) | [github](https://github.com/sirinsidiator/ESO-LibAddonMenu) )
 * Optional: LibDialog ( [ESOUI](https://www.esoui.com/downloads/info1931-LibDialog-Customconfirmationdialogwith2buttons.html) )
+
+--------------
+
+# Easy Split
+[Easy Split](https://github.com/beHoeppy/EzSplit-ESO) is a small utility to split Encounter.log files into individual runs.
